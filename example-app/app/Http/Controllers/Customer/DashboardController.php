@@ -8,6 +8,13 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return view('customer.dashboard');
+        $projects = auth()
+            ->user()
+            ->projects()
+            ->wherePivot('role', 'customer')
+            ->latest('projects.created_at')
+            ->get();
+
+        return view('customer.dashboard', compact('projects'));
     }
 }

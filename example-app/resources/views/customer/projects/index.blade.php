@@ -1,87 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Projects</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Task Management System</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a href="{{ route('customer.dashboard') }}" class="nav-link">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <span class="nav-link">{{ auth()->user()->name }}</span>
-                    </li>
-                    <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-link nav-link">Logout</button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
+@extends('customer.layouts.app')
+
+@section('title', 'My Projects')
+
+@section('content')
+<div class="container">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h1 class="h4 mb-1 fw-600">My Projects</h1>
+            <p class="text-muted mb-0 small">Create a project, then add tasks inside it.</p>
         </div>
-    </nav>
+        <a href="{{ route('customer.projects.create') }}" class="btn btn-primary rounded-3 px-4">
+            <i class="fas fa-plus me-2"></i>New Project
+        </a>
+    </div>
 
-    <div class="container mt-5">
-        <div class="row mb-4 align-items-center">
-            <div class="col-md-6">
-                <h1 class="mb-0">My Projects</h1>
-                <p class="text-muted mb-0">Create a project, then add tasks inside it.</p>
-            </div>
-            <div class="col-md-6 text-end">
-                <a href="{{ route('customer.projects.create') }}" class="btn btn-primary">Create New Project</a>
-            </div>
-        </div>
-
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-
+    <div class="card card-customer border-0 overflow-hidden">
         @if ($projects->isEmpty())
-            <div class="alert alert-info">
-                You don't have any projects yet.
-                <a href="{{ route('customer.projects.create') }}">Create your first project</a>.
+            <div class="card-body text-center py-5">
+                <div class="rounded-circle bg-light d-inline-flex p-4 mb-3">
+                    <i class="fas fa-folder-open fa-2x text-muted"></i>
+                </div>
+                <p class="text-muted mb-3">You don't have any projects yet.</p>
+                <a href="{{ route('customer.projects.create') }}" class="btn btn-primary rounded-3">Create your first project</a>
             </div>
         @else
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead class="table-dark">
+                <table class="table table-customer table-hover align-middle mb-0">
+                    <thead>
                         <tr>
-                            <th>Name</th>
+                            <th class="ps-4">Name</th>
                             <th>Description</th>
                             <th>Created</th>
-                            <th>Actions</th>
+                            <th class="text-end pe-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($projects as $project)
                             <tr>
-                                <td>{{ $project->name }}</td>
-                                <td>{{ $project->description ?? '—' }}</td>
-                                <td>{{ $project->created_at->format('M d, Y') }}</td>
-                                <td class="d-flex gap-2">
-                                    <a href="{{ route('customer.projects.show', $project) }}" class="btn btn-sm btn-info">Open</a>
-                                    <a href="{{ route('customer.projects.tasks.create', $project) }}" class="btn btn-sm btn-primary">New Task</a>
+                                <td class="ps-4 fw-500">{{ $project->name }}</td>
+                                <td class="text-muted">{{ Str::limit($project->description, 50) ?: '—' }}</td>
+                                <td class="text-muted small">{{ $project->created_at->format('M d, Y') }}</td>
+                                <td class="text-end pe-4">
+                                    <a href="{{ route('customer.projects.show', $project) }}" class="btn btn-sm btn-primary rounded-3 me-1">Open</a>
+                                    <a href="{{ route('customer.projects.tasks.create', $project) }}" class="btn btn-sm btn-outline-primary rounded-3 me-1">New Task</a>
+                                    <a href="{{ route('customer.projects.edit', $project) }}" class="btn btn-sm btn-outline-primary rounded-3 px-2" title="Edit"><i class="fas fa-pen"></i></a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger rounded-3 px-2" title="Delete" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $project->id }}"><i class="fas fa-trash-alt"></i></button>
                                 </td>
                             </tr>
+                            <div class="modal fade" id="deleteModal-{{ $project->id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content border-0 shadow-lg rounded-3">
+                                        <div class="modal-header border-0">
+                                            <h5 class="modal-title fw-600 text-danger">Delete project?</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-muted">
+                                            This will permanently delete <strong class="text-dark">{{ $project->name }}</strong> and all its tasks.
+                                        </div>
+                                        <div class="modal-footer border-0">
+                                            <button type="button" class="btn btn-outline-secondary rounded-3" data-bs-dismiss="modal">Cancel</button>
+                                            <form action="{{ route('customer.projects.destroy', $project) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger rounded-3">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         @endforeach
                     </tbody>
                 </table>
             </div>
         @endif
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-
+</div>
+@endsection

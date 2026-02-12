@@ -26,8 +26,7 @@ Route::middleware(['auth', 'customer'])->prefix('customer')->group(function () {
     Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('customer.dashboard');
 
     // Projects (customers create projects, then create tasks inside projects)
-    Route::resource('/projects', CustomerProjectController::class, ['as' => 'customer'])
-        ->only(['index', 'create', 'store', 'show']);
+    Route::resource('/projects', CustomerProjectController::class, ['as' => 'customer']);
 
     // Nested tasks under a project (shallow routes for show/edit/update/destroy)
     Route::resource('/projects.tasks', CustomerTaskController::class, ['as' => 'customer'])

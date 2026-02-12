@@ -49,12 +49,7 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        $isCustomerMember = $project
-            ->customers()
-            ->where('users.id', auth()->id())
-            ->exists();
-
-        abort_unless($isCustomerMember, 403);
+        $this->ensureCustomerMember($project);
 
         $tasks = $project
             ->tasks()
@@ -63,6 +58,49 @@ class ProjectController extends Controller
             ->get();
 
         return view('customer.projects.show', compact('project', 'tasks'));
+    }
+
+    public function edit(Project $project)
+    {
+        $this->ensureCustomerMember($project);
+        return view('customer.projects.edit', compact('project'));
+    }
+
+    public function update(Request $request, Project $project)
+    {
+        $this->ensureCustomerMember($project);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $project->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+        ]);
+
+        return redirect()
+            ->route('customer.projects.show', $project)
+            ->with('success', 'Project updated successfully.');
+    }
+
+    public function destroy(Project $project)
+    {
+        $this->ensureCustomerMember($project);
+        $project->delete();
+        return redirect()
+            ->route('customer.dashboard')
+            ->with('success', 'Project deleted.');
+    }
+
+    private function ensureCustomerMember(Project $project): void
+    {
+        $isCustomerMember = $project
+            ->customers()
+            ->where('users.id', auth()->id())
+            ->exists();
+        abort_unless($isCustomerMember, 403);
     }
 }
 
