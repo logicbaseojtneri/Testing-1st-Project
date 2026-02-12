@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Enums;
+
+enum TaskCategory: string
+{
+    case FRONTEND = 'frontend';
+    case BACKEND = 'backend';
+    case SERVER = 'server';
+
+    public function label(): string
+    {
+        return match($this) {
+            self::FRONTEND => 'Frontend',
+            self::BACKEND => 'Backend',
+            self::SERVER => 'Server',
+        };
+    }
+
+    public function assignToRole(): UserRole
+    {
+        return match($this) {
+            self::FRONTEND => UserRole::FRONTEND_DEV,
+            self::BACKEND => UserRole::BACKEND_DEV,
+            self::SERVER => UserRole::SERVER_ADMIN,
+        };
+    }
+}

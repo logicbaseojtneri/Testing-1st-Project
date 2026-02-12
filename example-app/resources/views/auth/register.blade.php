@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SB Admin 2 - Register</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+
+</head>
+
+<body class="bg-gradient-primary">
+
+    <div class="container">
+
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
+
+            <div class="col-xl-10 col-lg-12 col-md-9">
+
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col-lg-6 d-none d-lg-block bg-register-image"></div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">Task Management System</h1>
+                                        <p class="text-muted">Create a new account</p>
+                                    </div>
+
+                                    @if ($errors->any())
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <strong>Registration Failed!</strong>
+                                            @foreach ($errors->all() as $error)
+                                                <div>{{ $error }}</div>
+                                            @endforeach
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    @endif
+
+                                    <form action="{{ route('register') }}" method="POST" class="user">
+                                        @csrf
+
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-user @error('name') is-invalid @enderror"
+                                                id="name" name="name" 
+                                                value="{{ old('name') }}"
+                                                placeholder="Full Name"
+                                                required>
+                                            @error('name')
+                                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="form-group">
+                                            <input type="email" class="form-control form-control-user @error('email') is-invalid @enderror"
+                                                id="email" name="email" 
+                                                value="{{ old('email') }}"
+                                                placeholder="Email Address"
+                                                required>
+                                            @error('email')
+                                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="form-label">Role</label>
+                                            <select class="form-control form-control-user @error('role') is-invalid @enderror"
+                                                id="role" name="role" required>
+                                                <option value="">-- Select Role --</option>
+                                                <option value="customer" {{ old('role') == 'customer' ? 'selected' : '' }}>Customer</option>
+                                                <option value="frontend_dev" {{ old('role') == 'frontend_dev' ? 'selected' : '' }}>Frontend Developer</option>
+                                                <option value="backend_dev" {{ old('role') == 'backend_dev' ? 'selected' : '' }}>Backend Developer</option>
+                                                <option value="server_admin" {{ old('role') == 'server_admin' ? 'selected' : '' }}>Server Administrator</option>
+                                            </select>
+                                            @error('role')
+                                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div style="position: relative;">
+                                                <input type="password" class="form-control form-control-user @error('password') is-invalid @enderror"
+                                                    id="password" name="password"
+                                                    placeholder="Password"
+                                                    required>
+                                                <button type="button" class="btn btn-link" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none;" onclick="togglePasswordVisibility('password')">
+                                                    <i class="fas fa-eye" id="passwordIcon"></i>
+                                                </button>
+                                            </div>
+                                            @error('password')
+                                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div style="position: relative;">
+                                                <input type="password" class="form-control form-control-user @error('password_confirmation') is-invalid @enderror"
+                                                    id="password_confirmation" name="password_confirmation"
+                                                    placeholder="Confirm Password"
+                                                    required>
+                                                <button type="button" class="btn btn-link" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none;" onclick="togglePasswordVisibility('password_confirmation')">
+                                                    <i class="fas fa-eye" id="passwordConfirmIcon"></i>
+                                                </button>
+                                            </div>
+                                            @error('password_confirmation')
+                                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary btn-user btn-block">Register Account</button>
+                                        <hr>
+                                    </form>
+
+                                    <hr>
+                                    <div class="text-center">
+                                        <a class="small" href="{{ route('login') }}">Already have an account? Login!</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+
+    <!-- Password Toggle Script -->
+    <script>
+        function togglePasswordVisibility(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const iconId = fieldId === 'password' ? 'passwordIcon' : 'passwordConfirmIcon';
+            const passwordIcon = document.getElementById(iconId);
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                passwordIcon.classList.remove('fa-eye');
+                passwordIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                passwordIcon.classList.remove('fa-eye-slash');
+                passwordIcon.classList.add('fa-eye');
+            }
+        }
+    </script>
+
+</body>
+
+</html>
