@@ -85,7 +85,7 @@
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Task Management System</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">ManageX System</h1>
                                         <p class="text-muted">Login to your account</p>
                                     </div>
 

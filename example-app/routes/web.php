@@ -31,6 +31,11 @@ Route::middleware(['auth', 'customer'])->prefix('customer')->group(function () {
     // Nested tasks under a project (shallow routes for show/edit/update/destroy)
     Route::resource('/projects.tasks', CustomerTaskController::class, ['as' => 'customer'])
         ->shallow();
+    
+    // All tasks, search, and filter
+    Route::get('/tasks/all', [CustomerTaskController::class, 'allTasks'])->name('customer.tasks.all');
+    Route::get('/tasks/search', [CustomerTaskController::class, 'search'])->name('customer.tasks.search');
+    Route::get('/tasks/filter', [CustomerTaskController::class, 'filter'])->name('customer.tasks.filter');
 });
 
 // Developer routes
@@ -38,14 +43,8 @@ Route::middleware(['auth', 'developer'])->prefix('developer')->group(function ()
     Route::get('/dashboard', [DeveloperDashboardController::class, 'index'])->name('developer.dashboard');
     Route::get('/tasks', [DeveloperTaskController::class, 'index'])->name('developer.tasks.index');
     Route::get('/tasks/{task}', [DeveloperTaskController::class, 'show'])->name('developer.tasks.show');
-});
-
-
-// Developer routes
-Route::middleware(['auth', 'developer'])->group(function () {
-    Route::get('/developer/dashboard', [Developer\DashboardController::class, 'index']);
-    Route::get('/developer/tasks', [Developer\TaskController::class, 'index']);
-    Route::get('/developer/tasks/{task}', [Developer\TaskController::class, 'show']);
+    Route::put('/tasks/{task}/status', [DeveloperTaskController::class, 'updateStatus'])->name('developer.tasks.updateStatus');
+    Route::post('/tasks/{task}/undo', [DeveloperTaskController::class, 'undoStatusChange'])->name('developer.tasks.undo');
 });
 
 // Admin routes

@@ -3,192 +3,486 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Business Frontpage - Start Bootstrap Template</title>
+        <meta name="description" content="ManageX - Manage projects and tasks efficiently" />
+        <meta name="author" content="ManageX Team" />
+        <title>ManageX - Project Management Made Simple</title>
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
         <!-- Bootstrap icons-->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Font Awesome -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
         <!-- Core theme CSS (includes Bootstrap)--> 
         <link href="{{ asset('css_2/styles.css') }}" rel="stylesheet" />
         <style>
-            :root{ --primary: #4e73df; --primary-600: #6b86ea; --primary-dark: #2e59d9; --muted:#6c757d; }
-            body { background: linear-gradient(180deg, #f6f8ff 0%, #ffffff 100%); }
-            .page-frame{ max-width:1200px; margin: 3.5rem auto; background: linear-gradient(180deg, rgba(78,115,223,0.03), rgba(255,255,255,0.6)); border-radius: 18px; padding: 36px; box-shadow: 0 12px 40px rgba(46,89,223,0.06); border: 1px solid rgba(78,115,223,0.06); }
-            .navbar-light .navbar-brand { color: var(--primary); font-weight: 700; }
-            .navbar-light .nav-link { color: rgba(0,0,0,0.65); }
-            .navbar-light .nav-link:hover { color: var(--primary); }
-            .header-hero{ padding: 0; }
-            .hero-grid{ display: flex; gap: 2.5rem; align-items: center; }
-            .hero-left{ flex: 1.05; }
-            .hero-right{ flex: 0.95; display:flex; align-items:center; justify-content:center; }
-            .hero-card-inner{ background: #fff; border-radius: 14px; padding: 48px 40px; box-shadow: 0 14px 40px rgba(46,89,223,0.06); }
-            /* hero icon removed */
-            .hero-title{ color: #232323; font-weight: 800; font-size: 2.6rem; line-height:1.05; margin-bottom: 0.5rem; }
-            .hero-sub{ color: var(--muted); font-size:1.05rem; max-width:640px; margin-bottom: 1.6rem; }
-            .btn-gradient{ background: linear-gradient(90deg,var(--primary),var(--primary-600)); color:#fff; border: none; padding: 0.85rem 1.6rem; font-size:1rem; border-radius: 10px; box-shadow: 0 8px 20px rgba(78,115,223,0.12); }
-            .btn-outline-primary{ color: var(--primary); border: 1px solid rgba(78,115,223,0.14); background: #fff; padding:0.85rem 1.6rem; border-radius:10px; }
-            .hero-illustration{ width:100%; height:320px; border-radius:12px; background: linear-gradient(135deg, rgba(255,200,220,0.15), rgba(200,230,255,0.12)); display:flex; align-items:center; justify-content:center; }
-            .feature .bi { color: var(--primary); font-size: 1.5rem; }
-            footer.py-5 { background: transparent; }
-            @media (max-width: 992px){ .hero-grid{ flex-direction:column-reverse; } .hero-illustration{ height:260px; } }
-            @media (max-width: 576px){ .page-frame{ margin:1.5rem; padding:18px; } .hero-title{ font-size:1.6rem; } }
+            :root {
+                --primary: #001f3f;
+                --primary-dark: #001428;
+                --white: #ffffff;
+                --light-bg: #f8f9fa;
+                --text-dark: #1a1a1a;
+                --text-muted: #6c757d;
+                --border: #e9ecef;
+            }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            html, body { height: 100%; width: 100%; }
+            body { 
+                background: linear-gradient(180deg, var(--white) 0%, #f0f3f9 100%);
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                color: var(--text-dark);
+                overflow-x: hidden;
+            }
+            
+            /* Navbar */
+            .navbar-landing {
+                background: var(--white) !important;
+                box-shadow: 0 2px 12px rgba(0, 31, 63, 0.08);
+                padding: 1rem 0;
+            }
+            .navbar-brand { 
+                color: var(--primary) !important;
+                font-weight: 800;
+                font-size: 1.4rem;
+                letter-spacing: -0.5px;
+            }
+            .nav-link { 
+                color: var(--text-dark) !important;
+                font-weight: 500;
+                margin: 0 0.5rem;
+                transition: all 0.3s ease;
+                position: relative;
+            }
+            .nav-link:hover { 
+                color: var(--primary) !important;
+            }
+            .nav-link::after {
+                content: '';
+                position: absolute;
+                bottom: -5px;
+                left: 0;
+                width: 0;
+                height: 2px;
+                background: var(--primary);
+                transition: width 0.3s ease;
+            }
+            .nav-link:hover::after {
+                width: 100%;
+            }
+            
+            /* Hero Section */
+            .hero-section {
+                padding: 4rem 0;
+                position: relative;
+                overflow: hidden;
+            }
+            .hero-section::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                right: -10%;
+                width: 500px;
+                height: 500px;
+                background: radial-gradient(circle, rgba(0, 31, 63, 0.08) 0%, transparent 70%);
+                border-radius: 50%;
+                z-index: 0;
+            }
+            .hero-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 3rem;
+                align-items: center;
+                position: relative;
+                z-index: 1;
+            }
+            .hero-content h1 {
+                font-size: 3rem;
+                font-weight: 800;
+                line-height: 1.2;
+                margin-bottom: 1rem;
+                color: var(--primary);
+                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+            .hero-content p {
+                font-size: 1.1rem;
+                color: var(--text-muted);
+                margin-bottom: 2rem;
+                line-height: 1.6;
+            }
+            .hero-buttons {
+                display: flex;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+            .btn-primary-custom {
+                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+                color: var(--white) !important;
+                border: none;
+                padding: 0.9rem 2rem;
+                border-radius: 10px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                box-shadow: 0 8px 20px rgba(0, 31, 63, 0.2);
+                text-decoration: none;
+                display: inline-block;
+            }
+            .btn-primary-custom:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 12px 30px rgba(0, 31, 63, 0.3);
+            }
+            .btn-secondary-custom {
+                background: var(--white);
+                color: var(--primary) !important;
+                border: 2px solid var(--primary);
+                padding: 0.8rem 1.95rem;
+                border-radius: 10px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                display: inline-block;
+            }
+            .btn-secondary-custom:hover {
+                background: var(--primary);
+                color: var(--white) !important;
+                transform: translateY(-3px);
+            }
+            .hero-image {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 400px;
+                background: linear-gradient(135deg, rgba(0, 31, 63, 0.08) 0%, rgba(0, 31, 63, 0.04) 100%);
+                border-radius: 16px;
+                border: 2px solid var(--border);
+                overflow: hidden;
+            }
+            .hero-image img {
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+            }
+            
+            /* Features Section */
+            .features-section {
+                padding: 5rem 0;
+                background: var(--white);
+            }
+            .section-header {
+                text-align: center;
+                margin-bottom: 4rem;
+            }
+            .section-header h2 {
+                font-size: 2.5rem;
+                font-weight: 800;
+                color: var(--primary);
+                margin-bottom: 1rem;
+            }
+            .section-header p {
+                font-size: 1.1rem;
+                color: var(--text-muted);
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            .feature-card {
+                background: var(--white);
+                border: 2px solid var(--border);
+                border-radius: 12px;
+                padding: 2rem;
+                text-align: center;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+            .feature-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+                transform: scaleX(0);
+                transition: transform 0.3s ease;
+            }
+            .feature-card:hover {
+                border-color: var(--primary);
+                box-shadow: 0 12px 30px rgba(0, 31, 63, 0.12);
+                transform: translateY(-5px);
+            }
+            .feature-card:hover::before {
+                transform: scaleX(1);
+            }
+            .feature-icon {
+                width: 60px;
+                height: 60px;
+                margin: 0 auto 1.5rem;
+                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.8rem;
+                color: var(--white);
+            }
+            .feature-card h3 {
+                font-size: 1.3rem;
+                font-weight: 700;
+                color: var(--primary);
+                margin-bottom: 1rem;
+            }
+            .feature-card p {
+                color: var(--text-muted);
+                line-height: 1.6;
+            }
+            
+            /* Contact Section */
+            .contact-section {
+                padding: 5rem 0;
+                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+                color: var(--white);
+            }
+            .contact-header {
+                text-align: center;
+                margin-bottom: 3rem;
+            }
+            .contact-header h2 {
+                font-size: 2.2rem;
+                font-weight: 800;
+                margin-bottom: 0.5rem;
+            }
+            .contact-header p {
+                font-size: 1.1rem;
+                color: rgba(255, 255, 255, 0.9);
+            }
+            .form-floating > .form-control,
+            .form-floating > .form-select {
+                background-color: rgba(255, 255, 255, 0.95) !important;
+                border: 2px solid transparent;
+                transition: all 0.3s ease;
+            }
+            .form-floating > .form-control:focus,
+            .form-floating > .form-select:focus {
+                background-color: var(--white) !important;
+                border-color: var(--primary) !important;
+                box-shadow: none;
+            }
+            .form-floating > label {
+                color: var(--text-dark);
+                font-weight: 600;
+            }
+            .btn-submit {
+                background: var(--white);
+                color: var(--primary) !important;
+                border: none;
+                padding: 0.9rem 2rem;
+                border-radius: 10px;
+                font-weight: 700;
+                transition: all 0.3s ease;
+            }
+            .btn-submit:hover:not(:disabled) {
+                background: var(--light-bg);
+                transform: translateY(-2px);
+            }
+            
+            /* Footer */
+            footer {
+                background: var(--primary);
+                color: var(--white);
+                padding: 2rem 0;
+                text-align: center;
+            }
+            footer a {
+                color: rgba(255, 255, 255, 0.8);
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+            footer a:hover {
+                color: var(--white);
+            }
+            
+            /* Responsive */
+            @media (max-width: 992px) {
+                .hero-container {
+                    grid-template-columns: 1fr;
+                }
+                .hero-content h1 {
+                    font-size: 2.2rem;
+                }
+                .hero-image {
+                    height: 300px;
+                }
+            }
+            @media (max-width: 576px) {
+                .hero-content h1 {
+                    font-size: 1.8rem;
+                }
+                .section-header h2 {
+                    font-size: 1.8rem;
+                }
+                .hero-buttons {
+                    flex-direction: column;
+                }
+                .btn-primary-custom, .btn-secondary-custom {
+                    width: 100%;
+                    text-align: center;
+                }
+            }
         </style>
     </head>
     <body>
-        <!-- Responsive navbar-->
-        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-            <div class="container px-5">
-                <a class="navbar-brand" href="{{ route('login') }}">Task Management</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{ url('/') }}">Home</a></li>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-landing">
+            <div class="container">
+                <a class="navbar-brand" href="{{ route('login') }}"><i class="fas fa-tasks me-2"></i>ManageX</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
                         <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
                         <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Docs</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
+                        <li class="nav-item ms-2"><a class="btn-primary-custom" href="{{ route('register') }}" style="padding: 0.6rem 1.4rem; font-size: 0.95rem;">Register</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
-        <!-- Header-->
-        <header class="header-hero">
-            <div class="page-frame">
-                <div class="hero-grid">
-                    <div class="hero-left">
-                        <div class="hero-card-inner">
-                            <h1 class="hero-title">Welcome to Task Management Application</h1>
-                            <p class="hero-sub">Create projects, auto-assign tasks to developers, and track progress — all from one dashboard.</p>
-                            <div class="d-flex gap-3">
-                                <a class="btn btn-gradient" href="{{ route('login') }}">Login</a>
-                                <a class="btn btn-outline-primary" href="{{ route('register') }}">Register</a>
-                            </div>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container">
+                <div class="hero-container">
+                    <div class="hero-content">
+                        <h1>Manage Your Projects Effortlessly</h1>
+                        <p>Create projects, organize tasks, and collaborate with your team. Track progress in real-time with our intuitive Kanban board and keep everyone on the same page.</p>
+                        <div class="hero-buttons">
+                            <a href="{{ route('login') }}" class="btn-primary-custom">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login to Start
+                            </a>
+                            <a href="{{ route('register') }}" class="btn-secondary-custom">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </a>
                         </div>
                     </div>
-                    <div class="hero-right">
-                        <div class="hero-illustration">
-                            <!-- Illustration placeholder - replace with actual image if available -->
-                            <img src="{{ asset('images/illustration.png') }}" alt="Illustration" style="max-width:92%; max-height:92%; object-fit:contain; border-radius:8px;" onerror="this.style.display='none'">
-                        </div>
+                    <div class="hero-image">
+                        <img src="{{ asset('images/illustration.png') }}" alt="Project Management" onerror="this.style.display='none'">
                     </div>
                 </div>
             </div>
-        </header>
-        <!-- Features section-->
-        <section class="py-5 border-bottom" id="features">
-            <div class="container px-5 my-5">
-                <div class="row gx-5">
-                    <div class="col-lg-4 mb-5 mb-lg-0">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-collection"></i></div>
-                        <h2 class="h4 fw-bolder">Featured title</h2>
-                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
-                        <a class="text-decoration-none" href="#!">
-                            Call to action
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
+        </section>
+        <!-- Features Section -->
+        <section class="features-section" id="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Powerful Features</h2>
+                    <p>Everything you need to manage projects and teams successfully</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-th"></i>
+                            </div>
+                            <h3>Kanban Board</h3>
+                            <p>Visualize your workflow with an intuitive Kanban board. Organize tasks into To Do, In Progress, Done, and Pending columns for better project management.</p>
+                        </div>
                     </div>
-                    <div class="col-lg-4 mb-5 mb-lg-0">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-building"></i></div>
-                        <h2 class="h4 fw-bolder">Featured title</h2>
-                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
-                        <a class="text-decoration-none" href="#!">
-                            Call to action
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h3>Team Collaboration</h3>
+                            <p>Assign tasks to team members, share projects, and collaborate seamlessly. Keep everyone updated with real-time project status and task assignments.</p>
+                        </div>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-toggles2"></i></div>
-                        <h2 class="h4 fw-bolder">Featured title</h2>
-                        <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
-                        <a class="text-decoration-none" href="#!">
-                            Call to action
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3>Track Progress</h3>
+                            <p>Monitor project health at a glance. Track task status, completion rates, and project timelines to ensure everything stays on schedule.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-folder"></i>
+                            </div>
+                            <h3>Project Management</h3>
+                            <p>Create and organize multiple projects with detailed descriptions. Manage project members and control who has access to each project.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <h3>Smart Search</h3>
+                            <p>Find tasks and projects instantly with powerful search and filter functionality. Sort by status, category, date, and more.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <h3>Secure & Reliable</h3>
+                            <p>Your data is secure with role-based access control. Only authorized team members can view and manage specific projects and tasks.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     
-        <!-- Contact section-->
-        <section class="bg-light py-5">
-            <div class="container px-5 my-5 px-5">
-                <div class="text-center mb-5">
-                    <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-envelope"></i></div>
-                    <h2 class="fw-bolder">Get in touch</h2>
-                    <p class="lead mb-0">We'd love to hear from you</p>
+        <!-- Contact Section -->
+        <section class="contact-section" id="contact">
+            <div class="container">
+                <div class="contact-header">
+                    <h2>Get In Touch</h2>
+                    <p>Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
                 </div>
-                <div class="row gx-5 justify-content-center">
+                <div class="row justify-content-center">
                     <div class="col-lg-6">
-                        <!-- * * * * * * * * * * * * * * *-->
-                        <!-- * * SB Forms Contact Form * *-->
-                        <!-- * * * * * * * * * * * * * * *-->
-                        <!-- This form is pre-integrated with SB Forms.-->
-                        <!-- To make this form functional, sign up at-->
-                        <!-- https://startbootstrap.com/solution/contact-forms-->
-                        <!-- to get an API token!-->
-                        <form id="contactForm" data-sb-form-api-token="API_TOKEN">
-                            <!-- Name input-->
+                        <form>
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="name" type="text" placeholder="Enter your name..." data-sb-validations="required" />
-                                <label for="name">Full name</label>
-                                <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
+                                <input class="form-control" id="name" type="text" placeholder="Your name" required>
+                                <label for="name">Full Name</label>
                             </div>
-                            <!-- Email address input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="email" type="email" placeholder="name@example.com" data-sb-validations="required,email" />
-                                <label for="email">Email address</label>
-                                <div class="invalid-feedback" data-sb-feedback="email:required">An email is required.</div>
-                                <div class="invalid-feedback" data-sb-feedback="email:email">Email is not valid.</div>
+                                <input class="form-control" id="email" type="email" placeholder="name@example.com" required>
+                                <label for="email">Email Address</label>
                             </div>
-                            <!-- Phone number input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="phone" type="tel" placeholder="(123) 456-7890" data-sb-validations="required" />
-                                <label for="phone">Phone number</label>
-                                <div class="invalid-feedback" data-sb-feedback="phone:required">A phone number is required.</div>
+                                <input class="form-control" id="phone" type="tel" placeholder="(123) 456-7890">
+                                <label for="phone">Phone Number</label>
                             </div>
-                            <!-- Message input-->
                             <div class="form-floating mb-3">
-                                <textarea class="form-control" id="message" type="text" placeholder="Enter your message here..." style="height: 10rem" data-sb-validations="required"></textarea>
+                                <textarea class="form-control" id="message" placeholder="Your message here..." style="height: 120px;" required></textarea>
                                 <label for="message">Message</label>
-                                <div class="invalid-feedback" data-sb-feedback="message:required">A message is required.</div>
                             </div>
-                            <!-- Submit success message-->
-                            <!---->
-                            <!-- This is what your users will see when the form-->
-                            <!-- has successfully submitted-->
-                            <div class="d-none" id="submitSuccessMessage">
-                                <div class="text-center mb-3">
-                                    <div class="fw-bolder">Form submission successful!</div>
-                                    To activate this form, sign up at
-                                    <br />
-                                    <a href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a>
-                                </div>
+                            <div class="d-grid">
+                                <button class="btn btn-submit" type="submit">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
                             </div>
-                            <!-- Submit error message-->
-                            <!---->
-                            <!-- This is what your users will see when there is-->
-                            <!-- an error submitting the form-->
-                            <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3">Error sending message!</div></div>
-                            <!-- Submit Button-->
-                            <div class="d-grid"><button class="btn btn-primary btn-lg disabled" id="submitButton" type="submit">Submit</button></div>
                         </form>
                     </div>
                 </div>
             </div>
         </section>
-        <!-- Footer-->
-        <footer class="py-5 bg-dark">
-            <div class="container px-5"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2023</p></div>
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <p class="mb-0">&copy; 2024 ManageX. All rights reserved. | Built with <i class="fas fa-heart" style="color: #ff6b6b;"></i> for better project management</p>
+            </div>
         </footer>
-        <!-- Bootstrap core JS-->
+        <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
+        <!-- Theme JS -->
         <script src="{{ asset('js_2/scripts.js') }}"></script>
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <!-- * *                               SB Forms JS                               * *-->
-        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
     </body>
 </html>

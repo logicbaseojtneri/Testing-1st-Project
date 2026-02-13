@@ -11,9 +11,9 @@ enum TaskCategory: string
     public function label(): string
     {
         return match($this) {
-            self::FRONTEND => 'Frontend',
-            self::BACKEND => 'Backend',
-            self::SERVER => 'Server',
+            self::FRONTEND => 'Frontend Developer',
+            self::BACKEND => 'Backend Developer',
+            self::SERVER => 'Server Administrator',
         };
     }
 

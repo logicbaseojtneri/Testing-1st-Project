@@ -41,9 +41,9 @@
                             <label for="category" class="form-label fw-500">Category <span class="text-danger">*</span></label>
                             <select class="form-select form-select-lg rounded-3 @error('category') is-invalid @enderror" id="category" name="category" required>
                                 <option value="">Select category</option>
-                                <option value="frontend" {{ old('category') == 'frontend' ? 'selected' : '' }}>Frontend</option>
-                                <option value="backend" {{ old('category') == 'backend' ? 'selected' : '' }}>Backend</option>
-                                <option value="server" {{ old('category') == 'server' ? 'selected' : '' }}>Server</option>
+                                <option value="frontend" {{ old('category') == 'frontend' ? 'selected' : '' }}>Frontend Developer</option>
+                                <option value="backend" {{ old('category') == 'backend' ? 'selected' : '' }}>Backend Developer</option>
+                                <option value="server" {{ old('category') == 'server' ? 'selected' : '' }}>Server Administrator</option>
                             </select>
                             @error('category')
                                 <span class="invalid-feedback">{{ $message }}</span>

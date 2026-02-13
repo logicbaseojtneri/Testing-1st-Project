@@ -1,6 +1,6 @@
 @extends('customer.layouts.app')
 
-@section('title', $project->name . ' – Tasks')
+@section('title', 'All Tasks')
 
 @section('content')
 <style>
@@ -9,7 +9,7 @@
         --primary-dark: #001428;
         --white: #ffffff;
         --light-bg: #f8f9fa;
-        --text-dark: #ffffff;
+        --text-dark: #1a1a1a;
         --text-muted: #6c757d;
         --border: #e9ecef;
     }
@@ -88,7 +88,7 @@
     .kanban-title {
         font-weight: 700;
         font-size: 1.1rem;
-        color: var(--text-dark);
+        color: #1a1a1a !important;
         margin: 0;
         display: flex;
         align-items: center;
@@ -145,25 +145,60 @@
     }
     
     .task-card {
-        background-color: var(--light-bg);
+        background-color: var(--white);
         border-radius: 8px;
         padding: 1rem;
         box-shadow: 0 1px 3px rgba(0, 31, 63, 0.06);
         cursor: pointer;
         transition: all 0.3s ease;
         border-left: 4px solid var(--border);
+        text-decoration: none !important;
     }
     
     .task-card:hover {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
         box-shadow: 0 4px 12px rgba(0, 31, 63, 0.15);
         transform: translateY(-2px);
     }
     
     .task-title {
+        font-weight: 700;
+        color: var(--primary);
+        margin: 0 0 0.75rem 0;
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+    
+    .task-card:hover .task-title {
+        color: var(--white);
+    }
+    
+    .task-info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .task-info-label {
         font-weight: 600;
-        color: var(--text-dark);
-        margin: 0 0 0.5rem 0;
-        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin-right: 0.5rem;
+    }
+    
+    .task-card:hover .task-info-label {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .task-info-value {
+        color: var(--primary);
+        flex: 1;
+        text-align: right;
+    }
+    
+    .task-card:hover .task-info-value {
+        color: var(--white);
     }
     
     .task-category {
@@ -173,16 +208,61 @@
         padding: 0.25rem 0.6rem;
         border-radius: 4px;
         font-size: 0.75rem;
-        font-weight: 500;
+        font-weight: 600;
     }
     
-    .task-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 0.75rem;
-        font-size: 0.85rem;
-        color: var(--text-muted);
+    .task-card:hover .task-category {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: var(--white);
+    }
+    
+    .task-status {
+        display: inline-block;
+        padding: 0.4rem 0.85rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: capitalize;
+    }
+    
+    .task-status.to-do {
+        background-color: rgba(109, 109, 109, 0.15);
+        color: #4a4a4a;
+    }
+    
+    .task-status.in-progress {
+        background-color: rgba(255, 152, 0, 0.2);
+        color: #e68900;
+    }
+    
+    .task-status.done {
+        background-color: rgba(76, 175, 80, 0.2);
+        color: #388e3c;
+    }
+    
+    .task-status.pending {
+        background-color: rgba(244, 67, 54, 0.2);
+        color: #d32f2f;
+    }
+    
+    .task-card:hover .task-status.to-do {
+        background-color: rgba(158, 158, 158, 0.2);
+        color: #4a4a4a;
+    }
+    
+    .task-card:hover .task-status.in-progress {
+        background-color: rgba(255, 152, 0, 0.2);
+        color: #e68900;
+    }
+    
+    .task-card:hover .task-status.done {
+        background-color: rgba(76, 175, 80, 0.2);
+        color: #388e3c;
+    }
+    
+    .task-card:hover .task-status.pending {
+        background-color: rgba(244, 67, 54, 0.2);
+        color: #d32f2f;
     }
     
     .empty-state {
@@ -214,24 +294,43 @@
     }
 </style>
 
-<div class="container py-4">
+<div class="container-fluid py-4">
     <div class="page-header">
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-            <div>
-                <h1 class="page-title">{{ $project->name }}</h1>
-                <p class="page-subtitle">{{ $project->description ?? 'Organize and track your project tasks' }}</p>
-            </div>
-            <a href="{{ route('customer.projects.show', $project) }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left me-2"></i>Back to Project
-            </a>
+        <div>
+            <h1 class="page-title">
+                @if (isset($query))
+                    Search Results for "{{ $query }}"
+                @elseif (isset($status))
+                    Tasks - {{ ucfirst(str_replace('_', ' ', $status)) }}
+                @elseif (isset($category))
+                    Tasks - {{ ucfirst($category) }} Category
+                @else
+                    All Tasks
+                @endif
+            </h1>
+            <p class="page-subtitle">
+                @if (isset($query))
+                    Showing {{ $tasks->count() }} result(s)
+                @elseif (isset($status) || isset($category))
+                    Filtered view
+                @else
+                    Manage and organize all your tasks
+                @endif
+            </p>
         </div>
     </div>
 
     @if ($tasks->isEmpty())
         <div class="card border-0 shadow-sm">
             <div class="card-body text-center py-5 text-muted">
-                <i class="fas fa-tasks fa-3x mb-3 opacity-25"></i>
-                <p class="mb-0">No tasks in this project yet. <a href="{{ route('customer.projects.tasks.create', $project) }}" style="color: var(--primary); font-weight: 600;">Create your first task</a>.</p>
+                <i class="fas fa-inbox fa-3x mb-3 opacity-25"></i>
+                <p class="mb-0">
+                    @if (isset($query))
+                        No tasks found matching "{{ $query }}"
+                    @else
+                        No tasks to display
+                    @endif
+                </p>
             </div>
         </div>
     @else
@@ -249,9 +348,17 @@
                     @forelse ($tasks->where('status', 'to_do') as $task)
                         <a href="{{ route('customer.tasks.show', $task) }}" class="task-card" style="text-decoration: none; display: block;">
                             <p class="task-title">{{ $task->title }}</p>
-                            <span class="task-category">{{ $task->category->label() }}</span>
-                            <div class="task-meta">
-                                <span>{{ $task->created_at->format('M d') }}</span>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Project:</span>
+                                <span class="task-info-value">{{ $task->project->name }}</span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Category:</span>
+                                <span class="task-info-value"><span class="task-category">{{ $task->category->label() }}</span></span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Status:</span>
+                                <span class="task-info-value"><span class="task-status to-do">{{ str_replace('_', ' ', $task->status) }}</span></span>
                             </div>
                         </a>
                     @empty
@@ -261,9 +368,6 @@
                         </div>
                     @endforelse
                 </div>
-                <a href="{{ route('customer.projects.tasks.create', $project) }}" class="add-task-btn">
-                    <i class="fas fa-plus me-2"></i>Add Task
-                </a>
             </div>
 
             <!-- In Progress Column -->
@@ -279,9 +383,17 @@
                     @forelse ($tasks->where('status', 'in_progress') as $task)
                         <a href="{{ route('customer.tasks.show', $task) }}" class="task-card" style="text-decoration: none; display: block;">
                             <p class="task-title">{{ $task->title }}</p>
-                            <span class="task-category">{{ $task->category->label() }}</span>
-                            <div class="task-meta">
-                                <span>{{ $task->created_at->format('M d') }}</span>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Project:</span>
+                                <span class="task-info-value">{{ $task->project->name }}</span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Category:</span>
+                                <span class="task-info-value"><span class="task-category">{{ $task->category->label() }}</span></span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Status:</span>
+                                <span class="task-info-value"><span class="task-status in-progress">{{ str_replace('_', ' ', $task->status) }}</span></span>
                             </div>
                         </a>
                     @empty
@@ -291,9 +403,6 @@
                         </div>
                     @endforelse
                 </div>
-                <a href="{{ route('customer.projects.tasks.create', $project) }}" class="add-task-btn">
-                    <i class="fas fa-plus me-2"></i>Add Task
-                </a>
             </div>
 
             <!-- Done Column -->
@@ -309,9 +418,17 @@
                     @forelse ($tasks->where('status', 'done') as $task)
                         <a href="{{ route('customer.tasks.show', $task) }}" class="task-card" style="text-decoration: none; display: block;">
                             <p class="task-title">{{ $task->title }}</p>
-                            <span class="task-category">{{ $task->category->label() }}</span>
-                            <div class="task-meta">
-                                <span>{{ $task->created_at->format('M d') }}</span>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Project:</span>
+                                <span class="task-info-value">{{ $task->project->name }}</span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Category:</span>
+                                <span class="task-info-value"><span class="task-category">{{ $task->category->label() }}</span></span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Status:</span>
+                                <span class="task-info-value"><span class="task-status done">{{ str_replace('_', ' ', $task->status) }}</span></span>
                             </div>
                         </a>
                     @empty
@@ -321,9 +438,6 @@
                         </div>
                     @endforelse
                 </div>
-                <a href="{{ route('customer.projects.tasks.create', $project) }}" class="add-task-btn">
-                    <i class="fas fa-plus me-2"></i>Add Task
-                </a>
             </div>
 
             <!-- Pending Column -->
@@ -339,9 +453,17 @@
                     @forelse ($tasks->where('status', 'pending') as $task)
                         <a href="{{ route('customer.tasks.show', $task) }}" class="task-card" style="text-decoration: none; display: block;">
                             <p class="task-title">{{ $task->title }}</p>
-                            <span class="task-category">{{ $task->category->label() }}</span>
-                            <div class="task-meta">
-                                <span>{{ $task->created_at->format('M d') }}</span>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Project:</span>
+                                <span class="task-info-value">{{ $task->project->name }}</span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Category:</span>
+                                <span class="task-info-value"><span class="task-category">{{ $task->category->label() }}</span></span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Status:</span>
+                                <span class="task-info-value"><span class="task-status pending">{{ str_replace('_', ' ', $task->status) }}</span></span>
                             </div>
                         </a>
                     @empty
@@ -351,9 +473,6 @@
                         </div>
                     @endforelse
                 </div>
-                <a href="{{ route('customer.projects.tasks.create', $project) }}" class="add-task-btn">
-                    <i class="fas fa-plus me-2"></i>Add Task
-                </a>
             </div>
         </div>
     @endif
