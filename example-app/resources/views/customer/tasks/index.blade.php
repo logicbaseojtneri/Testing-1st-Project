@@ -40,7 +40,7 @@
                                 <td><span class="badge badge-customer">{{ $task->category->label() }}</span></td>
                                 <td><span class="badge bg-light text-dark border">{{ $task->status }}</span></td>
                                 <td class="text-muted">
-                                    {{ $task->category->positionLabel() }}
+                                    {{ $task->category->label() }}
                                     @if ($task->assignee)
                                         – {{ $task->assignee->name }}
                                     @endif

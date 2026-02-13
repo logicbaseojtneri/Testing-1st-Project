@@ -22,7 +22,7 @@
                         </div>
                         <div class="col-sm-4">
                             <span class="text-muted small d-block">Assigned to</span>
-                            {{ $task->category->positionLabel() }}
+                            {{ $task->category->label() }}
                             @if ($task->assignee)
                                 – <span class="fw-500">{{ $task->assignee->name }}</span>
                             @endif

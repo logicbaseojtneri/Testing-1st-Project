@@ -145,9 +145,18 @@
                                     <div class="alert alert-info mt-3" role="alert">
                                         <strong>Demo Credentials:</strong><br>
                                         <small>
-                                            Customer: customer@example.com<br>
-                                            Developer: developer@example.com<br>
-                                            Password: password123
+                                            <strong>Customer:</strong><br>
+                                            Email: customer@example.com<br>
+                                            Password: password<br><br>
+                                            <strong>Frontend Developer:</strong><br>
+                                            Email: mara@example.com<br>
+                                            Password: password<br><br>
+                                            <strong>Backend Developer:</strong><br>
+                                            Email: arianne@example.com<br>
+                                            Password: password<br><br>
+                                            <strong>Server Administrator:</strong><br>
+                                            Email: margaret@example.com<br>
+                                            Password: password
                                         </small>
                                     </div>
                                 </div>

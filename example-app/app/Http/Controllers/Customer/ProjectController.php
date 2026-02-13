@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Services\ProjectAssignmentService;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -41,6 +42,10 @@ class ProjectController extends Controller
         auth()->user()->projects()->attach($project->id, [
             'role' => 'customer',
         ]);
+
+        // Automatically assign developers to the project
+        $assignmentService = new ProjectAssignmentService();
+        $assignmentService->assignDevelopersToProject($project);
 
         return redirect()
             ->route('customer.projects.show', $project)
