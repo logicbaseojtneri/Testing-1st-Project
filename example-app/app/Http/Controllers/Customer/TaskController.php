@@ -158,12 +158,15 @@ class TaskController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->input('query');
+        $query = $request->input('query', '');
         
         $tasks = Task::where('created_by', auth()->id())
             ->where(function ($q) use ($query) {
                 $q->where('title', 'like', "%{$query}%")
-                  ->orWhere('description', 'like', "%{$query}%");
+                  ->orWhere('description', 'like', "%{$query}%")
+                  ->orWhereHas('project', function ($projectQuery) use ($query) {
+                      $projectQuery->where('name', 'like', "%{$query}%");
+                  });
             })
             ->latest()
             ->get();
@@ -173,8 +176,8 @@ class TaskController extends Controller
 
     public function filter(Request $request)
     {
-        $status = $request->input('status');
-        $category = $request->input('category');
+        $status = $request->input('status', null);
+        $category = $request->input('category', null);
         
         $query = Task::where('created_by', auth()->id());
         

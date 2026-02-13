@@ -72,17 +72,17 @@
                         <li><h6 class="dropdown-header">Filter by Category</h6></li>
                         <li>
                             <a class="dropdown-item" href="{{ route('customer.tasks.filter', ['category' => 'frontend']) }}">
-                                <i class="fas fa-code me-2"></i>Frontend
+                                <i class="fas fa-code me-2"></i>Frontend Developer
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="{{ route('customer.tasks.filter', ['category' => 'backend']) }}">
-                                <i class="fas fa-database me-2"></i>Backend
+                                <i class="fas fa-database me-2"></i>Backend Developer
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item" href="{{ route('customer.tasks.filter', ['category' => 'server']) }}">
-                                <i class="fas fa-server me-2"></i>Server
+                                <i class="fas fa-server me-2"></i>Server Administrator
                             </a>
                         </li>
                     </ul>

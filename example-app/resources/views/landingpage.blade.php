@@ -480,9 +480,14 @@
                 <p class="mb-0">&copy; 2024 ManageX. All rights reserved. | Built with <i class="fas fa-heart" style="color: #ff6b6b;"></i> for better project management</p>
             </div>
         </footer>
-        <!-- Bootstrap JS -->
+        <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Theme JS -->
+        <!-- Core theme JS-->
         <script src="{{ asset('js_2/scripts.js') }}"></script>
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <!-- * *                               SB Forms JS                               * *-->
+        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
     </body>
 </html>
