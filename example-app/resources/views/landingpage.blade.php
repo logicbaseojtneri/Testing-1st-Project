@@ -40,7 +40,7 @@
                 padding: 1rem 0;
             }
             .navbar-brand { 
-                color: var(--primary) !important;
+                color: var(--white) !important;
                 font-weight: 800;
                 font-size: 1.4rem;
                 letter-spacing: -0.5px;

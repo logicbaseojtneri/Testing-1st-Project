@@ -25,7 +25,7 @@
                 <!-- All Tasks -->
                 <li class="nav-item">
                     <a class="nav-link px-3" href="{{ route('customer.tasks.all') }}">
-                        <i class="fas fa-list me-2 opacity-75"></i>All Tasks
+                        <i class="fas fa-list me-2 opacity-75"></i>My Tasks
                     </a>
                 </li>
 
@@ -84,6 +84,22 @@
                             <a class="dropdown-item" href="{{ route('customer.tasks.filter', ['category' => 'server']) }}">
                                 <i class="fas fa-server me-2"></i>Server Administrator
                             </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Notifications -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle px-3 position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="display: flex; align-items: center;">
+                        <i class="fas fa-bell" style="font-size: 1.2rem;"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationBadge" style="display: none; font-size: 0.65rem; padding: 0.25rem 0.5rem;">
+                            0
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown" style="min-width: 360px; max-height: 400px; overflow-y: auto;">
+                        <!-- Notifications will be loaded here by JavaScript -->
+                        <li class="dropdown-header text-center py-3">
+                            <i class="fas fa-spinner fa-spin me-2"></i>Loading notifications...
                         </li>
                     </ul>
                 </li>

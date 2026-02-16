@@ -1,233 +1,301 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $task->title }} - ManageX</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="{{ asset('css/modern.css') }}" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #001f3f;
-            --primary-dark: #001428;
-            --white: #ffffff;
-            --light-bg: #f8f9fa;
-            --text-dark: #1a1a1a;
-            --text-muted: #6c757d;
-            --border: #e9ecef;
-        }
-        body { background-color: var(--white); }
-        .navbar { background-color: var(--white); border-bottom: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0, 31, 63, 0.06); }
-        .navbar-brand { font-weight: 700; color: var(--primary); font-size: 1.4rem; }
-        .nav-link { color: var(--text-dark) !important; font-weight: 500; }
-        .nav-link:hover { color: var(--primary) !important; }
-        .nav-link.active { color: var(--primary) !important; }
-        .container { max-width: 900px; padding: 2rem 1rem; }
-        .card { border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0, 31, 63, 0.08); background-color: var(--white); margin-bottom: 1.5rem; }
-        .card-header { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border: none; border-radius: 12px 12px 0 0; color: var(--white); padding: 1.5rem; }
-        .card-header h2 { margin: 0; font-weight: 700; font-size: 1.8rem; }
-        .card-body { padding: 2rem; }
-        h4 { color: var(--primary); font-weight: 600; margin-top: 1.5rem; margin-bottom: 1rem; }
-        .badge { padding: 0.5rem 0.75rem; font-weight: 500; border-radius: 6px; }
-        .info-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
-        .info-item { padding: 1rem; background-color: var(--light-bg); border-radius: 8px; }
-        .info-item label { font-weight: 600; color: var(--text-dark); }
-        .info-item p { margin: 0.5rem 0 0 0; color: var(--text-muted); }
-        .form-control, .form-select { border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem; font-size: 0.95rem; }
-        .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 31, 63, 0.1); outline: none; }
-        .btn { border-radius: 6px; font-weight: 500; padding: 0.6rem 1.2rem; transition: all 0.3s ease; }
-        .btn-primary { background-color: var(--primary); border-color: var(--primary); }
-        .btn-primary:hover { background-color: var(--primary-dark); border-color: var(--primary-dark); }
-        .btn-outline-secondary { color: var(--primary); border-color: var(--border); }
-        .btn-outline-secondary:hover { background-color: rgba(0, 31, 63, 0.05); border-color: var(--primary); }
-        .btn-outline-warning { color: #ff8c00; border-color: #ff8c00; }
-        .btn-outline-warning:hover { background-color: #ff8c00; color: var(--white); }
-        .alert { border: none; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; font-weight: 500; }
-        .alert-success { background-color: #d1f2eb; color: #0f6b51; }
-        .alert-danger { background-color: #ffe0e0; color: #7d2a2a; }
-        .alert-danger ul { margin-bottom: 0; }
-        .table { border-collapse: collapse; width: 100%; }
-        .table thead th { background-color: var(--light-bg); border: none; font-weight: 600; color: var(--text-dark); padding: 1rem; font-size: 0.9rem; }
-        .table tbody td { border: 1px solid var(--border); padding: 1rem; }
-        .table tbody tr:hover { background-color: rgba(0, 31, 63, 0.02); }
-        .divider { border: none; height: 1px; background-color: var(--border); margin: 1.5rem 0; }
-    </style>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand" href="{{ route('developer.dashboard') }}">
-                <i class="fas fa-tasks me-2"></i>ManageX
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a href="{{ route('developer.dashboard') }}" class="nav-link">
-                            <i class="fas fa-chart-line me-1"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('developer.tasks.index') }}" class="nav-link">
-                            <i class="fas fa-list me-1"></i>My Tasks
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle me-1"></i>{{ auth()->user()->name }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+@extends('developer.layouts.app')
+
+@section('title', $task->title)
+
+@section('content')
+<style>
+    :root {
+        --primary: #001f3f;
+        --primary-dark: #001428;
+        --white: #ffffff;
+        --light-bg: #f8f9fa;
+        --text-dark: #1a1a1a;
+        --text-muted: #6c757d;
+        --border: #e9ecef;
+    }
+
+    .task-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 31, 63, 0.08);
+        margin-bottom: 2rem;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border: none;
+        border-radius: 12px 12px 0 0;
+        color: var(--white);
+        padding: 2rem;
+    }
+
+    .card-header h2 {
+        margin: 0;
+        font-weight: 700;
+        color: var(--white);
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .info-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-item label {
+        color: var(--primary);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .info-item p {
+        margin: 0;
+        color: var(--text-dark);
+    }
+
+    h4 {
+        color: var(--primary);
+        font-weight: 600;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 2rem 0;
+    }
+
+    .alert {
+        border: none;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .btn {
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .badge {
+        padding: 0.35rem 0.65rem;
+        font-weight: 500;
+    }
+</style>
+
+<div class="task-container py-4">
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fas fa-check-circle me-2"></i>{{ $task->title }}</h2>
         </div>
-    </nav>
-
-    <div class="container">
-        <div class="card">
-            <div class="card-header">
-                <h2><i class="fas fa-check-circle me-2"></i>{{ $task->title }}</h2>
+        <div class="card-body">
+            <div class="info-row">
+                <div class="info-item">
+                    <label><i class="fas fa-folder me-2"></i>Project</label>
+                    <p><strong>{{ $task->project->name }}</strong></p>
+                </div>
+                <div class="info-item">
+                    <label><i class="fas fa-tag me-2"></i>Category</label>
+                    <p><span class="badge" style="background-color: rgba(0, 31, 63, 0.1); color: var(--primary);">{{ $task->category?->value ?? 'N/A' }}</span></p>
+                </div>
+                <div class="info-item">
+                    <label><i class="fas fa-circle-notch me-2"></i>Current Status</label>
+                    <p><span class="badge" style="background-color: rgba(0, 31, 63, 0.1); color: var(--primary);">{{ ucfirst(str_replace('_', ' ', $task->status)) }}</span></p>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="info-row">
-                    <div class="info-item">
-                        <label><i class="fas fa-folder me-2"></i>Project</label>
-                        <p><strong>{{ $task->project->name }}</strong></p>
-                    </div>
-                    <div class="info-item">
-                        <label><i class="fas fa-tag me-2"></i>Category</label>
-                        <p><span class="badge" style="background-color: rgba(0, 31, 63, 0.1); color: var(--primary);">{{ $task->category->label() }}</span></p>
-                    </div>
-                    <div class="info-item">
-                        <label><i class="fas fa-circle-notch me-2"></i>Current Status</label>
-                        <p><span class="badge" style="background-color: rgba(0, 31, 63, 0.1); color: var(--primary);">{{ ucfirst(str_replace('_', ' ', $task->status)) }}</span></p>
-                    </div>
+
+            <div class="info-row">
+                <div class="info-item">
+                    <label><i class="fas fa-user me-2"></i>Created By</label>
+                    <p>{{ $task->creator->name }}</p>
                 </div>
-
-                <div class="info-row">
-                    <div class="info-item">
-                        <label><i class="fas fa-user me-2"></i>Created By</label>
-                        <p>{{ $task->creator->name }}</p>
-                    </div>
-                    <div class="info-item">
-                        <label><i class="fas fa-calendar me-2"></i>Created</label>
-                        <p>{{ $task->created_at->format('M d, Y H:i') }}</p>
-                    </div>
-                    <div class="info-item">
-                        <label><i class="fas fa-sync me-2"></i>Last Updated</label>
-                        <p>{{ $task->updated_at->format('M d, Y H:i') }}</p>
-                    </div>
+                <div class="info-item">
+                    <label><i class="fas fa-calendar me-2"></i>Created</label>
+                    <p>{{ $task->created_at->format('M d, Y H:i') }}</p>
                 </div>
+                <div class="info-item">
+                    <label><i class="fas fa-sync me-2"></i>Last Updated</label>
+                    <p>{{ $task->updated_at->format('M d, Y H:i') }}</p>
+                </div>
+            </div>
 
+            <hr class="divider">
+
+            <h4><i class="fas fa-align-left me-2"></i>Description</h4>
+            <p style="line-height: 1.6; color: var(--text-dark);">{{ $task->description ?? 'No description provided' }}</p>
+
+            @if ($task->link || $task->image_path || $task->deadline)
                 <hr class="divider">
-
-                <h4><i class="fas fa-align-left me-2"></i>Description</h4>
-                <p style="line-height: 1.6; color: var(--text-dark);">{{ $task->description ?? 'No description provided' }}</p>
-
-                <hr class="divider">
-
-                <h4><i class="fas fa-exchange-alt me-2"></i>Update Status</h4>
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul class="mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-                @if (session('success'))
-                    <div class="alert alert-success">
-                        <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-                    </div>
-                @endif
-                @if (session('error'))
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                <h4><i class="fas fa-paperclip me-2"></i>Task Details</h4>
+                
+                @if ($task->link)
+                    <div class="mb-3">
+                        <label style="color: var(--primary); font-weight: 600;"><i class="fas fa-link me-2"></i>Reference Link</label>
+                        <p><a href="{{ $task->link }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-external-link-alt me-1"></i>Open Link
+                        </a></p>
                     </div>
                 @endif
 
-                <form action="{{ route('developer.tasks.updateStatus', $task) }}" method="POST" class="mb-3">
-                    @csrf
-                    @method('PUT')
-                    <div class="row g-2 align-items-end">
-                        <div class="col-md-8">
-                            <label for="status" class="form-label"><strong>Select New Status</strong></label>
-                            <select class="form-select" id="status" name="status" required>
-                                <option value="">Choose a status...</option>
-                                <option value="to_do" {{ $task->status === 'to_do' ? 'selected' : '' }}>To Do</option>
-                                <option value="in_progress" {{ $task->status === 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                                <option value="done" {{ $task->status === 'done' ? 'selected' : '' }}>Done</option>
-                                <option value="pending" {{ $task->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-save me-1"></i>Update Status
-                            </button>
+                @if ($task->image_path)
+                    <div class="mb-3">
+                        <label style="color: var(--primary); font-weight: 600;"><i class="fas fa-image me-2"></i>Task Image</label>
+                        <div style="margin-top: 0.5rem;">
+                            <img src="{{ asset('storage/' . $task->image_path) }}" alt="{{ $task->title }}" style="max-width: 100%; max-height: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 31, 63, 0.1);">
                         </div>
                     </div>
-                </form>
+                @endif
 
-                @if ($task->history()->where('field_name', 'status')->exists())
-                    <form action="{{ route('developer.tasks.undo', $task) }}" method="POST" class="mb-3">
-                        @csrf
-                        <button type="submit" class="btn btn-outline-warning btn-sm">
-                            <i class="fas fa-undo me-1"></i>Undo Last Change
+                @if ($task->deadline)
+                    <div class="mb-3">
+                        <label style="color: var(--primary); font-weight: 600;"><i class="fas fa-calendar-alt me-2"></i>Deadline</label>
+                        <p style="font-size: 1.1rem; color: {{ $task->deadline < now() && $task->status !== 'done' ? '#d32f2f' : 'var(--text-dark)' }};">
+                            {{ $task->deadline->format('M d, Y \a\t H:i\A') }}
+                            @if ($task->deadline < now() && $task->status !== 'done')
+                                <span class="badge bg-danger ms-2"><i class="fas fa-exclamation-triangle me-1"></i>Overdue</span>
+                            @elseif ($task->deadline->diffInDays(now()) <= 2 && $task->deadline > now() && $task->status !== 'done')
+                                <span class="badge bg-warning ms-2"><i class="fas fa-clock me-1"></i>Due Soon</span>
+                            @endif
+                        </p>
+                    </div>
+                @endif
+            @endif
+
+            <hr class="divider">
+
+            <h4><i class="fas fa-exchange-alt me-2"></i>Update Status</h4>
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            @if (session('success'))
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
+                </div>
+            @endif
+
+            <form action="{{ route('developer.tasks.updateStatus', $task) }}" method="POST" class="mb-3">
+                @csrf
+                @method('PUT')
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-8">
+                        <label for="status" class="form-label"><strong>Select New Status</strong></label>
+                        <select class="form-select" id="status" name="status" required>
+                            <option value="">Choose a status...</option>
+                            <option value="to_do" {{ $task->status === 'to_do' ? 'selected' : '' }}>To Do</option>
+                            <option value="in_progress" {{ $task->status === 'in_progress' ? 'selected' : '' }}>In Progress</option>
+                            <option value="done" {{ $task->status === 'done' ? 'selected' : '' }}>Done</option>
+                            <option value="pending" {{ $task->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-save me-1"></i>Update Status
                         </button>
-                    </form>
-                @endif
+                    </div>
+                </div>
+            </form>
 
-                @if ($task->history->count() > 0)
-                    <hr class="divider">
-                    <h4><i class="fas fa-history me-2"></i>Change History</h4>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Field</th>
-                                    <th>Changed By</th>
-                                    <th>Old Value</th>
-                                    <th>New Value</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($task->history as $record)
-                                    <tr>
-                                        <td><strong>{{ ucfirst(str_replace('_', ' ', $record->field_name)) }}</strong></td>
-                                        <td>{{ $record->changedBy->name ?? 'System' }}</td>
-                                        <td style="color: var(--text-muted);">{{ $record->old_value ?? '—' }}</td>
-                                        <td style="color: var(--text-muted);">{{ $record->new_value ?? '—' }}</td>
-                                        <td style="color: var(--text-muted); font-size: 0.9rem;">{{ $record->created_at->format('M d, Y H:i') }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+            <hr class="divider">
+
+            <h4><i class="fas fa-paperclip me-2"></i>Add Task Details</h4>
+            <form action="{{ route('developer.tasks.updateDetails', $task) }}" method="POST" enctype="multipart/form-data" class="mb-3">
+                @csrf
+                @method('PUT')
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="detail_link" class="form-label"><i class="fas fa-link me-1"></i>Reference Link</label>
+                        <input type="url" class="form-control @error('link') is-invalid @enderror" id="detail_link" name="link" value="{{ old('link', $task->link) }}" placeholder="https://example.com/resource">
+                        <small class="text-muted">Optional reference link for the task</small>
+                        @error('link')
+                            <span class="invalid-feedback d-block">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="detail_image" class="form-label"><i class="fas fa-image me-1"></i>Upload Image</label>
+                        <input type="file" class="form-control @error('image') is-invalid @enderror" id="detail_image" name="image" accept="image/*">
+                        <small class="text-muted">Max 5MB. Supported: JPG, PNG, GIF</small>
+                        @error('image')
+                            <span class="invalid-feedback d-block">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                @if ($task->image_path)
+                    <div class="mt-3 mb-3">
+                        <small class="text-muted d-block mb-2">Current image:</small>
+                        <img src="{{ asset('storage/' . $task->image_path) }}" alt="{{ $task->title }}" style="max-width: 150px; max-height: 150px; border-radius: 8px;">
                     </div>
                 @endif
+                <button type="submit" class="btn btn-primary mt-2">
+                    <i class="fas fa-save me-1"></i>Save Details
+                </button>
+            </form>
 
-                <div class="mt-4 pt-2">
-                    <a href="{{ route('developer.tasks.index') }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-1"></i>Back to Tasks
-                    </a>
+            @if ($task->history()->where('field_name', 'status')->exists())
+                <form action="{{ route('developer.tasks.undo', $task) }}" method="POST" class="mb-3">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-undo me-1"></i>Undo Last Change
+                    </button>
+                </form>
+            @endif
+
+            @if ($task->history->count() > 0)
+                <hr class="divider">
+                <h4><i class="fas fa-history me-2"></i>Change History</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Changed By</th>
+                                <th>Old Value</th>
+                                <th>New Value</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($task->history as $record)
+                                <tr>
+                                    <td><strong>{{ ucfirst(str_replace('_', ' ', $record->field_name)) }}</strong></td>
+                                    <td>{{ $record->changedBy->name ?? 'System' }}</td>
+                                    <td style="color: var(--text-muted);">{{ $record->old_value ?? '—' }}</td>
+                                    <td style="color: var(--text-muted);">{{ $record->new_value ?? '—' }}</td>
+                                    <td style="color: var(--text-muted); font-size: 0.9rem;">{{ $record->created_at->format('M d, Y H:i') }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
+            @endif
+
+            <div class="mt-4 pt-2">
+                <a href="{{ route('developer.tasks.index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Tasks
+                </a>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+@endsection

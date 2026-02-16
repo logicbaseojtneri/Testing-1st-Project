@@ -92,5 +92,21 @@ class User extends Authenticatable
     {
         return in_array($this->role, UserRole::developerRoles());
     }
+
+    /**
+     * Get all notifications for this user
+     */
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class)->latest();
+    }
+
+    /**
+     * Get unread notifications for this user
+     */
+    public function unreadNotifications(): HasMany
+    {
+        return $this->notifications()->whereNull('read_at');
+    }
 }
 

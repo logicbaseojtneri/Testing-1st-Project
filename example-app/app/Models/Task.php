@@ -20,12 +20,18 @@ class Task extends Model
         'project_id',
         'created_by',
         'assigned_to',
+        'due_date',
+        'link',
+        'image_path',
+        'deadline',
     ];
 
     protected function casts(): array
     {
         return [
             'category' => TaskCategory::class,
+            'due_date' => 'datetime',
+            'deadline' => 'datetime',
         ];
     }
 

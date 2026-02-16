@@ -5,13 +5,18 @@ namespace App\Http\Controllers\Developer;
 use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Models\TaskHistory;
+use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = auth()->user()->assignedTasks()->get();
+        $tasks = auth()->user()->assignedTasks()
+            ->with('project')
+            ->latest()
+            ->get();
         return view('developer.tasks.index', compact('tasks'));
     }
 
@@ -43,6 +48,16 @@ class TaskController extends Controller
             ]);
 
             $task->update(['status' => $validated['status']]);
+
+            // Create notification for customer
+            Notification::create([
+                'user_id' => $task->created_by,
+                'title' => 'Task Status Updated',
+                'message' => 'Task "' . $task->title . '" status changed to ' . ucfirst(str_replace('_', ' ', $validated['status'])),
+                'type' => 'task_status_updated',
+                'related_id' => $task->id,
+                'related_type' => 'task',
+            ]);
         }
 
         return redirect()
@@ -83,6 +98,43 @@ class TaskController extends Controller
         return redirect()
             ->route('developer.tasks.show', $task)
             ->with('success', 'Status change undone successfully!');
+    }
+
+    /**
+     * Update task details (link and image)
+     */
+    public function updateDetails(Request $request, Task $task)
+    {
+        $this->authorizeTaskAccess($task);
+
+        $validated = $request->validate([
+            'link' => 'nullable|url',
+            'image' => 'nullable|file|image|max:5120',
+        ]);
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($task->image_path) {
+                Storage::disk('public')->delete($task->image_path);
+            }
+            $validated['image_path'] = $request->file('image')->store('task-images', 'public');
+        }
+
+        // Prepare update data
+        $updateData = [];
+        if (isset($validated['link'])) {
+            $updateData['link'] = $validated['link'];
+        }
+        if (isset($validated['image_path'])) {
+            $updateData['image_path'] = $validated['image_path'];
+        }
+
+        $task->update($updateData);
+
+        return redirect()
+            ->route('developer.tasks.show', $task)
+            ->with('success', 'Task details updated successfully!');
     }
 
     /**

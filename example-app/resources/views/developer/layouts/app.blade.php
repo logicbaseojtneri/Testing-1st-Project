@@ -46,6 +46,10 @@
             color: var(--primary) !important;
         }
 
+        .nav-link.active {
+            color: var(--primary) !important;
+        }
+
         .navbar-toggler {
             border: none;
         }
@@ -257,7 +261,7 @@
     @stack('styles')
 </head>
 <body>
-    @include('customer.partials.nav')
+    @include('developer.partials.nav')
 
     <main>
         <div class="container-fluid px-4">
@@ -415,4 +419,3 @@
     @stack('scripts')
 </body>
 </html>
-

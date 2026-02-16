@@ -1,6 +1,6 @@
 @extends('customer.layouts.app')
 
-@section('title', 'All Tasks')
+@section('title', 'All My Tasks')
 
 @section('content')
 <style>
@@ -350,11 +350,11 @@
                             <p class="task-title">{{ $task->title }}</p>
                             <div class="task-info-row">
                                 <span class="task-info-label">Project:</span>
-                                <span class="task-info-value">{{ $task->project->name }}</span>
+                                <span class="task-info-value">{{ $task->project->name ?? 'No Project' }}</span>
                             </div>
                             <div class="task-info-row">
                                 <span class="task-info-label">Category:</span>
-                                <span class="task-info-value"><span class="task-category">{{ $task->category->label() }}</span></span>
+                                <span class="task-info-value"><span class="task-category">{{ $task->category?->value ?? 'N/A' }}</span></span>
                             </div>
                             <div class="task-info-row">
                                 <span class="task-info-label">Status:</span>
@@ -385,11 +385,11 @@
                             <p class="task-title">{{ $task->title }}</p>
                             <div class="task-info-row">
                                 <span class="task-info-label">Project:</span>
-                                <span class="task-info-value">{{ $task->project->name }}</span>
+                                <span class="task-info-value">{{ $task->project->name ?? 'No Project' }}</span>
                             </div>
                             <div class="task-info-row">
                                 <span class="task-info-label">Category:</span>
-                                <span class="task-info-value"><span class="task-category">{{ $task->category->label() }}</span></span>
+                                <span class="task-info-value"><span class="task-category">{{ $task->category?->value ?? 'N/A' }}</span></span>
                             </div>
                             <div class="task-info-row">
                                 <span class="task-info-label">Status:</span>
@@ -420,11 +420,11 @@
                             <p class="task-title">{{ $task->title }}</p>
                             <div class="task-info-row">
                                 <span class="task-info-label">Project:</span>
-                                <span class="task-info-value">{{ $task->project->name }}</span>
+                                <span class="task-info-value">{{ $task->project->name ?? 'No Project' }}</span>
                             </div>
                             <div class="task-info-row">
                                 <span class="task-info-label">Category:</span>
-                                <span class="task-info-value"><span class="task-category">{{ $task->category->label() }}</span></span>
+                                <span class="task-info-value"><span class="task-category">{{ $task->category?->value ?? 'N/A' }}</span></span>
                             </div>
                             <div class="task-info-row">
                                 <span class="task-info-label">Status:</span>
@@ -455,11 +455,11 @@
                             <p class="task-title">{{ $task->title }}</p>
                             <div class="task-info-row">
                                 <span class="task-info-label">Project:</span>
-                                <span class="task-info-value">{{ $task->project->name }}</span>
+                                <span class="task-info-value">{{ $task->project->name ?? 'No Project' }}</span>
                             </div>
                             <div class="task-info-row">
                                 <span class="task-info-label">Category:</span>
-                                <span class="task-info-value"><span class="task-category">{{ $task->category->label() }}</span></span>
+                                <span class="task-info-value"><span class="task-category">{{ $task->category?->value ?? 'N/A' }}</span></span>
                             </div>
                             <div class="task-info-row">
                                 <span class="task-info-label">Status:</span>

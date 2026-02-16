@@ -54,7 +54,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('customer.tasks.update', $task) }}" method="POST">
+                    <form action="{{ route('customer.tasks.update', $task) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="mb-4">
@@ -74,6 +74,41 @@
                             @error('description')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label for="link" class="form-label">
+                                <i class="fas fa-link me-1" style="color: var(--primary);"></i>Link
+                            </label>
+                            <input type="url" class="form-control @error('link') is-invalid @enderror" id="link" name="link" value="{{ old('link', $task->link) }}" placeholder="https://example.com">
+                            @error('link')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label for="image" class="form-label">
+                                <i class="fas fa-image me-1" style="color: var(--primary);"></i>Upload Image
+                            </label>
+                            @if ($task->image_path)
+                                <div class="mb-3">
+                                    <img src="{{ asset('storage/' . $task->image_path) }}" alt="{{ $task->title }}" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
+                                    <p class="text-muted mb-0 mt-2"><small>Current image</small></p>
+                                </div>
+                            @endif
+                            <input type="file" class="form-control @error('image') is-invalid @enderror" id="image" name="image" accept="image/*">
+                            <small class="text-muted">Max 5MB. Supported: JPG, PNG, GIF. Leave blank to keep current image.</small>
+                            @error('image')
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label for="deadline" class="form-label">
+                                <i class="fas fa-calendar me-1" style="color: var(--primary);"></i>Deadline
+                            </label>
+                            <input type="datetime-local" class="form-control @error('deadline') is-invalid @enderror" id="deadline" name="deadline" value="{{ old('deadline', $task->deadline ? $task->deadline->format('Y-m-d\TH:i') : '') }}" min="{{ now()->format('Y-m-d\TH:i') }}">
+                            @error('deadline')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                            <small class="text-muted">Deadline must be in the future</small>
                         </div>
                         <div class="mb-4">
                             <label for="category" class="form-label">

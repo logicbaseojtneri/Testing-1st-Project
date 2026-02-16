@@ -18,6 +18,6 @@ class DeveloperOnly
             return $next($request);
         }
 
-        return redirect('/dashboard')->with('error', 'Unauthorized access');
+        return redirect('/login')->with('error', 'Unauthorized access');
     }
 }

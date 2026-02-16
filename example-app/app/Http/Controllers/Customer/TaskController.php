@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Models\Project;
 use App\Models\TaskHistory;
+use App\Models\Notification;
 use App\Services\TaskAssignmentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
@@ -40,12 +42,23 @@ class TaskController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category' => 'required|in:frontend,backend,server',
+            'link' => 'nullable|url',
+            'image' => 'nullable|file|image|max:5120',
+            'deadline' => 'nullable|date|after_or_equal:today',
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('task-images', 'public');
+        }
 
         $task = Task::create([
             'title' => $validated['title'],
             'description' => $validated['description'],
             'category' => $validated['category'],
+            'link' => $validated['link'] ?? null,
+            'image_path' => $imagePath,
+            'deadline' => $validated['deadline'] ?? null,
             'project_id' => $project->id,
             'created_by' => auth()->id(),
             'status' => 'to_do',
@@ -53,6 +66,18 @@ class TaskController extends Controller
 
         // Auto-assign task based on category
         $this->assignmentService->assignTask($task);
+
+        // Create notification for assigned developer
+        if ($task->assigned_to) {
+            Notification::create([
+                'user_id' => $task->assigned_to,
+                'title' => 'New Task Assigned',
+                'message' => 'You have been assigned a new task: ' . $task->title,
+                'type' => 'task_assigned',
+                'related_id' => $task->id,
+                'related_type' => 'task',
+            ]);
+        }
 
         return redirect()
             ->route('customer.projects.show', $project)
@@ -84,7 +109,19 @@ class TaskController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category' => 'required|in:frontend,backend,server',
+            'link' => 'nullable|url',
+            'image' => 'nullable|file|image|max:5120',
+            'deadline' => 'nullable|date|after_or_equal:today',
         ]);
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($task->image_path) {
+                Storage::disk('public')->delete($task->image_path);
+            }
+            $validated['image_path'] = $request->file('image')->store('task-images', 'public');
+        }
 
         // Record history for changes
         if ($task->title !== $validated['title']) {
@@ -117,7 +154,41 @@ class TaskController extends Controller
             ]);
         }
 
-        $task->update($validated);
+        if ($task->link !== ($validated['link'] ?? null)) {
+            TaskHistory::create([
+                'task_id' => $task->id,
+                'changed_by' => auth()->id(),
+                'field_name' => 'link',
+                'old_value' => $task->link,
+                'new_value' => $validated['link'] ?? null,
+            ]);
+        }
+
+        if ($task->deadline !== ($validated['deadline'] ?? null)) {
+            TaskHistory::create([
+                'task_id' => $task->id,
+                'changed_by' => auth()->id(),
+                'field_name' => 'deadline',
+                'old_value' => $task->deadline,
+                'new_value' => $validated['deadline'] ?? null,
+            ]);
+        }
+
+        // Prepare update data
+        $updateData = [
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'category' => $validated['category'],
+            'link' => $validated['link'] ?? null,
+            'deadline' => $validated['deadline'] ?? null,
+        ];
+
+        // Only add image_path if a new image was uploaded
+        if (isset($validated['image_path'])) {
+            $updateData['image_path'] = $validated['image_path'];
+        }
+
+        $task->update($updateData);
 
         return redirect()
             ->route('customer.tasks.show', $task)
@@ -150,6 +221,7 @@ class TaskController extends Controller
     public function allTasks()
     {
         $tasks = Task::where('created_by', auth()->id())
+            ->with('project')
             ->latest()
             ->get();
 

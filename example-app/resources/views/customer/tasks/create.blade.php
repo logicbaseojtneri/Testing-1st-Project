@@ -21,7 +21,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('customer.projects.tasks.store', $project) }}" method="POST">
+                    <form action="{{ route('customer.projects.tasks.store', $project) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-4">
                             <label for="title" class="form-label fw-500">Task title <span class="text-danger">*</span></label>
@@ -36,6 +36,29 @@
                             @error('description')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label for="link" class="form-label fw-500">Link</label>
+                            <input type="url" class="form-control form-control-lg rounded-3 @error('link') is-invalid @enderror" id="link" name="link" value="{{ old('link') }}" placeholder="https://example.com">
+                            @error('link')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label for="image" class="form-label fw-500">Upload Image</label>
+                            <input type="file" class="form-control form-control-lg rounded-3 @error('image') is-invalid @enderror" id="image" name="image" accept="image/*">
+                            <small class="text-muted">Max 5MB. Supported: JPG, PNG, GIF</small>
+                            @error('image')
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="mb-4">
+                            <label for="deadline" class="form-label fw-500">Deadline</label>
+                            <input type="datetime-local" class="form-control form-control-lg rounded-3 @error('deadline') is-invalid @enderror" id="deadline" name="deadline" value="{{ old('deadline') }}" min="{{ now()->format('Y-m-d\TH:i') }}">
+                            @error('deadline')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                            <small class="text-muted">Deadline must be in the future</small>
                         </div>
                         <div class="mb-4">
                             <label for="category" class="form-label fw-500">Category <span class="text-danger">*</span></label>

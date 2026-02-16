@@ -1,205 +1,370 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - ManageX</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <link href="{{ asset('css/modern.css') }}" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #001f3f;
-            --primary-dark: #001428;
-            --white: #ffffff;
-            --light-bg: #f8f9fa;
-            --text-dark: #1a1a1a;
-            --text-muted: #6c757d;
-            --border: #e9ecef;
-        }
+﻿@extends('developer.layouts.app')
 
-        body {
-            background-color: var(--white);
-        }
+@section('title', 'Dashboard')
 
-        .navbar {
-            background-color: var(--white);
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 2px 8px rgba(0, 31, 63, 0.06);
-        }
+@section('content')
+<style>
+    :root {
+        --primary: #001f3f;
+        --primary-dark: #001428;
+        --white: #ffffff;
+        --light-bg: #f8f9fa;
+        --text-dark: #1a1a1a;
+        --text-muted: #6c757d;
+        --border: #e9ecef;
+        --success: #4caf50;
+        --warning: #ff9800;
+        --danger: #f44336;
+    }
 
-        .navbar-brand {
-            font-weight: 700;
-            color: var(--primary);
-            font-size: 1.4rem;
-        }
+    .welcome-section {
+        margin-bottom: 2rem;
+    }
 
-        .nav-link {
-            color: var(--text-dark) !important;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
+    .welcome-section h1 {
+        color: var(--primary);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
 
-        .nav-link:hover {
-            color: var(--primary) !important;
-        }
+    .role-badge {
+        display: inline-block;
+        background-color: rgba(0, 31, 63, 0.1);
+        color: var(--primary);
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
 
-        h1 {
-            color: var(--primary);
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
+    .kpi-card {
+        background: linear-gradient(135deg, var(--white) 0%, #f5f5f5 100%);
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 31, 63, 0.06);
+        border-left: 4px solid;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
 
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 1rem;
-            margin-bottom: 2rem;
-        }
+    .kpi-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 31, 63, 0.12);
+    }
 
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 31, 63, 0.06);
-            transition: all 0.3s ease;
-        }
+    .kpi-card.total { border-left-color: var(--primary); }
+    .kpi-card.in-progress { border-left-color: var(--warning); }
+    .kpi-card.overdue { border-left-color: var(--danger); }
+    .kpi-card.completed { border-left-color: var(--success); }
 
-        .card:hover {
-            box-shadow: 0 8px 24px rgba(0, 31, 63, 0.12);
-            transform: translateY(-2px);
-        }
+    .kpi-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        margin: 0 auto 0.75rem;
+        color: var(--white);
+    }
 
-        .card-body {
-            padding: 2rem;
-        }
+    .kpi-card.total .kpi-icon { background-color: var(--primary); }
+    .kpi-card.in-progress .kpi-icon { background-color: var(--warning); }
+    .kpi-card.overdue .kpi-icon { background-color: var(--danger); }
+    .kpi-card.completed .kpi-icon { background-color: var(--success); }
 
-        .card-title {
-            color: var(--text-dark);
-            font-weight: 700;
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
-        }
+    .kpi-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.25rem;
+    }
 
-        .card-text {
-            color: var(--text-muted);
-            margin-bottom: 1.5rem;
-        }
+    .kpi-label {
+        color: var(--text-muted);
+        font-weight: 500;
+        font-size: 0.8rem;
+    }
 
-        .btn-primary {
-            background-color: var(--primary);
-            border-color: var(--primary);
-            font-weight: 500;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-        }
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
 
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-            border-color: var(--primary-dark);
-        }
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
 
-        .role-badge {
-            display: inline-block;
-            background-color: rgba(0, 31, 63, 0.1);
-            color: var(--primary);
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.85rem;
+    .section-title i {
+        color: var(--primary);
+    }
+
+    .project-card {
+        background-color: var(--white);
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: 0 2px 8px rgba(0, 31, 63, 0.06);
+        border: 1px solid var(--border);
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .project-card:hover {
+        box-shadow: 0 8px 20px rgba(0, 31, 63, 0.12);
+        transform: translateY(-4px);
+        border-color: var(--primary);
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .project-name {
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .project-desc {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin: 0.5rem 0 0 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .project-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .project-meta i {
+        color: var(--primary);
+        width: 14px;
+    }
+
+    .tasks-container {
+        background-color: var(--white);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 31, 63, 0.06);
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
+
+    .task-item {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        width: 100%;
+        text-decoration: none;
+        color: inherit;
+        background-color: var(--white);
+    }
+
+    .task-item:last-child {
+        border-bottom: none;
+    }
+
+    .task-item:hover {
+        background-color: rgba(0, 31, 63, 0.02);
+        padding-left: 1.25rem;
+    }
+
+    .task-info {
+        flex: 1;
+    }
+
+    .task-title {
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.25rem;
+        font-size: 0.95rem;
+    }
+
+    .task-project {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    .task-status {
+        display: inline-block;
+        padding: 0.3rem 0.7rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: capitalize;
+        white-space: nowrap;
+        margin-left: 1rem;
+    }
+
+    .task-status.to-do { background-color: rgba(158, 158, 158, 0.15); color: #4a4a4a; }
+    .task-status.in-progress { background-color: rgba(255, 152, 0, 0.2); color: #e68900; }
+    .task-status.done { background-color: rgba(76, 175, 80, 0.2); color: #388e3c; }
+    .task-status.pending { background-color: rgba(244, 67, 54, 0.2); color: #d32f2f; }
+
+    .empty-message {
+        padding: 2rem;
+        text-align: center;
+        color: var(--text-muted);
+    }
+
+    .empty-message i {
+        font-size: 2rem;
+        opacity: 0.2;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    @media (max-width: 1024px) {
+        .content-grid {
+            grid-template-columns: 1fr;
         }
-    </style>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-tasks me-2"></i>TaskFlow
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('developer.dashboard') }}">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('developer.tasks.index') }}">Tasks</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-user-circle me-1"></i>
-                            {{ auth()->user()->name }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+    }
+</style>
+
+<div class="py-4">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <h1>Welcome, {{ auth()->user()->name }}! </h1>
+        <span class="role-badge">Developer</span>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+        <!-- Total Tasks -->
+        <div class="kpi-card total">
+            <div class="kpi-icon">
+                <i class="fas fa-tasks"></i>
             </div>
+            <div class="kpi-number">{{ $kpis['total'] }}</div>
+            <div class="kpi-label">Total Tasks</div>
         </div>
-    </nav>
 
-    <div class="container">
-        <div class="mb-4">
-            <h1>Welcome, {{ auth()->user()->name }}! 👋</h1>
-            <p class="subtitle">
-                <span class="role-badge">{{ auth()->user()->role->label() }}</span>
-            </p>
+        <!-- In Progress -->
+        <div class="kpi-card in-progress">
+            <div class="kpi-icon">
+                <i class="fas fa-hourglass-start"></i>
+            </div>
+            <div class="kpi-number">{{ $kpis['in_progress'] }}</div>
+            <div class="kpi-label">In Progress</div>
         </div>
 
-        <div class="row">
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fas fa-tasks text-primary me-2"></i>My Tasks
-                        </h5>
-                        <p class="card-text">View and manage all tasks assigned to you.</p>
-                        <a href="{{ route('developer.tasks.index') }}" class="btn btn-primary">View Tasks</a>
-                    </div>
-                </div>
+        <!-- Overdue -->
+        <div class="kpi-card overdue">
+            <div class="kpi-icon">
+                <i class="fas fa-exclamation-triangle"></i>
             </div>
+            <div class="kpi-number">{{ $kpis['overdue'] }}</div>
+            <div class="kpi-label">Overdue</div>
+        </div>
 
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fas fa-chart-bar text-primary me-2"></i>Progress
-                        </h5>
-                        <p class="card-text">Track your task completion rate and progress.</p>
-                        <button type="button" class="btn btn-primary" disabled>Coming Soon</button>
-                    </div>
-                </div>
+        <!-- Completed -->
+        <div class="kpi-card completed">
+            <div class="kpi-icon">
+                <i class="fas fa-check-circle"></i>
             </div>
-
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fas fa-bell text-primary me-2"></i>Notifications
-                        </h5>
-                        <p class="card-text">Stay updated with latest task assignments.</p>
-                        <button type="button" class="btn btn-primary" disabled>Coming Soon</button>
-                    </div>
-                </div>
-            </div>
+            <div class="kpi-number">{{ $kpis['completed'] }}</div>
+            <div class="kpi-label">Completed</div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <!-- Content Grid: Projects (Left) and Recent Tasks (Right) -->
+    <div class="content-grid">
+        <!-- Projects -->
+        <div>
+            <h2 class="section-title">
+                <i class="fas fa-folder"></i>My Projects
+            </h2>
 
+            @if ($projects->isEmpty())
+                <div class="empty-message">
+                    <i class="fas fa-inbox"></i>
+                    <p>No projects yet</p>
+                </div>
+            @else
+                @foreach ($projects as $project)
+                    <a href="{{ route('developer.projects.show', $project) }}" class="project-card">
+                        <div class="project-name">{{ $project->name }}</div>
+                        <p class="project-desc">{{ $project->description ?? 'No description' }}</p>
+                        <div class="project-meta">
+                            <span>
+                                <i class="fas fa-tasks"></i>
+                                {{ $project->assigned_task_count }} task{{ $project->assigned_task_count !== 1 ? 's' : '' }}
+                            </span>
+                            <span style="margin-left: auto;">
+                                <i class="fas fa-calendar"></i>
+                                {{ $project->created_at->format('M d') }}
+                            </span>
+                        </div>
+                    </a>
+                @endforeach
+            @endif
+        </div>
+
+        <!-- Recent Tasks -->
+        <div>
+            <h2 class="section-title">
+                <i class="fas fa-clock"></i>Recent Tasks
+            </h2>
+
+            @if ($recentTasks->isEmpty())
+                <div class="empty-message">
+                    <i class="fas fa-inbox"></i>
+                    <p>No tasks yet</p>
+                </div>
+            @else
+                <div class="tasks-container">
+                    @foreach ($recentTasks as $task)
+                        <a href="{{ route('developer.tasks.show', $task) }}" class="task-item">
+                            <div class="task-info">
+                                <div class="task-title">{{ $task->title }}</div>
+                                <div class="task-project">
+                                    <i class="fas fa-folder-open"></i>
+                                    {{ $task->project->name ?? 'No Project' }}
+                                </div>
+                            </div>
+                            <span class="task-status {{ str_replace('_', '-', $task->status) }}">
+                                {{ ucfirst(str_replace('_', ' ', $task->status)) }}
+                            </span>
+                        </a>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
+
+@endsection
