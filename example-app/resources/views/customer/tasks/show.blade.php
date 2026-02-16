@@ -111,9 +111,50 @@
         color: #4caf50;
     }
     
-    .status-pending {
-        background-color: rgba(244, 67, 54, 0.2);
-        color: #f44336;
+    .status-review {
+        background-color: rgba(123, 31, 162, 0.2);
+        color: #7b1fa2;
+    }
+
+    /* Overdue Styles */
+    .header-section.header-overdue {
+        background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+    }
+
+    .overdue-banner {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: #fff;
+        color: #d32f2f;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 800;
+        margin-top: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        animation: pulse-overdue 2s ease-in-out infinite;
+    }
+
+    .overdue-banner i {
+        font-size: 1.1rem;
+    }
+
+    @keyframes pulse-overdue {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    .meta-item.meta-overdue {
+        border-left: 4px solid #d32f2f;
+        background-color: rgba(244, 67, 54, 0.06);
+    }
+
+    .meta-item.meta-overdue .meta-value {
+        color: #d32f2f;
+        font-weight: 700;
     }
     
     .card-modern {
@@ -290,9 +331,13 @@
     }
 </style>
 
+@php
+    $isOverdue = $task->deadline && \Carbon\Carbon::parse($task->deadline)->isPast() && $task->status !== 'done';
+@endphp
+
 <div class="container py-4">
     <!-- Header Section -->
-    <div class="header-section">
+    <div class="header-section {{ $isOverdue ? 'header-overdue' : '' }}">
         <a href="{{ route('customer.projects.tasks.index', $task->project) }}" class="close-btn">
             <i class="fas fa-times"></i>
         </a>
@@ -304,6 +349,11 @@
         <div class="status-badge status-{{ str_replace('_', '-', $task->status) }}">
             {{ str_replace('_', ' ', $task->status) }}
         </div>
+        @if ($isOverdue)
+            <div class="overdue-banner">
+                <i class="fas fa-bell" style="color: #d32f2f;"></i> Overdue
+            </div>
+        @endif
     </div>
 
     <!-- Main Content Card -->
@@ -323,17 +373,39 @@
                         <span class="badge-modern">{{ $task->category->label() }}</span>
                     </div>
                 </div>
+                <div class="meta-item {{ $isOverdue ? 'meta-overdue' : '' }}">
+                    <div class="meta-label">
+                        <i class="fas fa-clock" style="color: {{ $isOverdue ? '#d32f2f' : 'var(--primary)' }};"></i>Deadline
+                    </div>
+                    <div class="meta-value">
+                        @if ($task->deadline)
+                            {{ $task->deadline->format('M d, Y \a\t h:i A') }}
+                        @else
+                            No deadline set
+                        @endif
+                    </div>
+                </div>
                 <div class="meta-item">
                     <div class="meta-label">
                         <i class="fas fa-calendar" style="color: var(--primary);"></i>Created
                     </div>
-                    <div class="meta-value">{{ $task->created_at->format('M d, Y') }}</div>
+                    <div class="meta-value">{{ $task->created_at->format('M d, Y \a\t h:i A') }}</div>
                 </div>
                 <div class="meta-item">
                     <div class="meta-label">
                         <i class="fas fa-sync" style="color: var(--primary);"></i>Last Updated
                     </div>
-                    <div class="meta-value">{{ $task->updated_at->format('M d, Y') }}</div>
+                    <div class="meta-value">{{ $task->updated_at->format('M d, Y \a\t h:i A') }}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">
+                        <i class="fas fa-info-circle" style="color: var(--primary);"></i>Status
+                    </div>
+                    <div class="meta-value">
+                        <span class="status-badge status-{{ str_replace('_', '-', $task->status) }}" style="margin-top: 0;">
+                            {{ ucfirst(str_replace('_', ' ', $task->status)) }}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -347,6 +419,33 @@
                 {{ $task->description ?? 'No description provided.' }}
             </div>
         </div>
+
+        <!-- Attachments Section -->
+        @if ($task->link || $task->image_path)
+            <div class="card-section">
+                <h3 class="section-title">
+                    <i class="fas fa-paperclip"></i>Attachments
+                </h3>
+                @if ($task->link)
+                    <div style="margin-bottom: 1rem;">
+                        <div class="meta-label" style="margin-bottom: 0.5rem;">
+                            <i class="fas fa-link" style="color: var(--primary);"></i>Reference Link
+                        </div>
+                        <a href="{{ $task->link }}" target="_blank" style="color: var(--primary); font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; background-color: var(--light-bg); padding: 0.6rem 1rem; border-radius: 8px; transition: all 0.3s ease;">
+                            <i class="fas fa-external-link-alt"></i>{{ Str::limit($task->link, 50) }}
+                        </a>
+                    </div>
+                @endif
+                @if ($task->image_path)
+                    <div>
+                        <div class="meta-label" style="margin-bottom: 0.5rem;">
+                            <i class="fas fa-image" style="color: var(--primary);"></i>Task Image
+                        </div>
+                        <img src="{{ asset('storage/' . $task->image_path) }}" alt="{{ $task->title }}" style="max-width: 100%; max-height: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 31, 63, 0.1);">
+                    </div>
+                @endif
+            </div>
+        @endif
 
         <!-- Action Buttons -->
         <div class="card-section">

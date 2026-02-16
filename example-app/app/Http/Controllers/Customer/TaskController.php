@@ -190,6 +190,18 @@ class TaskController extends Controller
 
         $task->update($updateData);
 
+        // Notify the assigned developer about the update
+        if ($task->assigned_to) {
+            Notification::create([
+                'user_id' => $task->assigned_to,
+                'title' => 'Task Updated',
+                'message' => 'Task "' . $task->title . '" has been updated by the customer.',
+                'type' => 'task_updated',
+                'related_id' => $task->id,
+                'related_type' => 'task',
+            ]);
+        }
+
         return redirect()
             ->route('customer.tasks.show', $task)
             ->with('success', 'Task updated successfully!');
@@ -225,7 +237,9 @@ class TaskController extends Controller
             ->latest()
             ->get();
 
-        return view('customer.tasks.all', compact('tasks'));
+        $kpi = $this->getTaskKpi();
+
+        return view('customer.tasks.all', compact('tasks', 'kpi'));
     }
 
     public function search(Request $request)
@@ -233,6 +247,7 @@ class TaskController extends Controller
         $query = $request->input('query', '');
         
         $tasks = Task::where('created_by', auth()->id())
+            ->with('project')
             ->where(function ($q) use ($query) {
                 $q->where('title', 'like', "%{$query}%")
                   ->orWhere('description', 'like', "%{$query}%")
@@ -243,7 +258,9 @@ class TaskController extends Controller
             ->latest()
             ->get();
 
-        return view('customer.tasks.all', compact('tasks', 'query'));
+        $kpi = $this->getTaskKpi();
+
+        return view('customer.tasks.all', compact('tasks', 'query', 'kpi'));
     }
 
     public function filter(Request $request)
@@ -251,7 +268,8 @@ class TaskController extends Controller
         $status = $request->input('status', null);
         $category = $request->input('category', null);
         
-        $query = Task::where('created_by', auth()->id());
+        $query = Task::where('created_by', auth()->id())
+            ->with('project');
         
         if ($status) {
             $query->where('status', $status);
@@ -263,7 +281,22 @@ class TaskController extends Controller
         
         $tasks = $query->latest()->get();
 
-        return view('customer.tasks.all', compact('tasks', 'status', 'category'));
+        $kpi = $this->getTaskKpi();
+
+        return view('customer.tasks.all', compact('tasks', 'status', 'category', 'kpi'));
+    }
+
+    private function getTaskKpi(): array
+    {
+        $allTasks = Task::where('created_by', auth()->id())->get();
+
+        return [
+            'total_tasks' => $allTasks->count(),
+            'in_progress' => $allTasks->where('status', 'in_progress')->count(),
+            'review' => $allTasks->where('status', 'review')->count(),
+            'completed' => $allTasks->where('status', 'done')->count(),
+            'overdue' => $allTasks->filter(fn ($t) => $t->deadline && \Carbon\Carbon::parse($t->deadline)->isPast() && $t->status !== 'done')->count(),
+        ];
     }
 
     private function abortIfNotCustomerProjectMember(Project $project): void

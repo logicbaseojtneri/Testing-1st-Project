@@ -309,9 +309,12 @@
         
         function updateNotificationDropdown(notifications) {
             const dropdown = document.querySelector('#notificationDropdown').nextElementSibling;
+            const viewAllUrl = '{{ route("customer.notifications") }}';
             
             if (notifications.length === 0) {
-                dropdown.innerHTML = '<li class="dropdown-header text-center py-3 text-muted">No notifications</li>';
+                dropdown.innerHTML = `<li class="dropdown-header text-center py-3 text-muted">No notifications</li>
+                    <li><hr class="dropdown-divider" style="margin: 0.5rem 0;"></li>
+                    <li><a class="dropdown-item text-center py-2 small" href="${viewAllUrl}"><i class="fas fa-list me-1"></i>View All Notifications</a></li>`;
                 return;
             }
             
@@ -334,7 +337,12 @@
                 `;
             });
             
-            html += '<li><hr class="dropdown-divider" style="margin: 0.5rem 0;"></li><li><a class="dropdown-item text-center py-2 small" href="#" id="markAllRead">Mark all as read</a></li>';
+            html += `<li><hr class="dropdown-divider" style="margin: 0.5rem 0;"></li>
+                <li style="display: flex; gap: 0; border-top: none;">
+                    <a class="dropdown-item text-center py-2 small" href="#" id="markAllRead" style="flex: 1; border-right: 1px solid #eee;"><i class="fas fa-check-double me-1"></i>Mark All Read</a>
+                    <a class="dropdown-item text-center py-2 small text-danger" href="#" id="deleteAllBtn" style="flex: 1;"><i class="fas fa-trash-alt me-1"></i>Delete All</a>
+                </li>
+                <li><a class="dropdown-item text-center py-2 small fw-bold" href="${viewAllUrl}" style="background: #f8f9fa; border-radius: 0 0 8px 8px;"><i class="fas fa-list me-1"></i>View All Notifications</a></li>`;
             
             dropdown.innerHTML = html;
             
@@ -353,6 +361,10 @@
             document.getElementById('markAllRead')?.addEventListener('click', (e) => {
                 e.preventDefault();
                 markAllAsRead();
+            });
+            document.getElementById('deleteAllBtn')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                deleteAllNotifications();
             });
         }
         
@@ -404,6 +416,19 @@
                 .then(response => response.json())
                 .then(() => loadNotifications())
                 .catch(error => console.error('Error marking notifications as read:', error));
+        }
+
+        function deleteAllNotifications() {
+            if (!confirm('Delete all notifications? This cannot be undone.')) return;
+            fetch('/api/notifications/all', {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                }
+            })
+                .then(response => response.json())
+                .then(() => loadNotifications())
+                .catch(error => console.error('Error deleting all notifications:', error));
         }
         
         // Load notifications on page load

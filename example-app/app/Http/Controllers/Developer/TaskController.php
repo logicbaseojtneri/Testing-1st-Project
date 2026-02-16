@@ -17,7 +17,16 @@ class TaskController extends Controller
             ->with('project')
             ->latest()
             ->get();
-        return view('developer.tasks.index', compact('tasks'));
+
+        $kpi = [
+            'total_tasks' => $tasks->count(),
+            'in_progress' => $tasks->where('status', 'in_progress')->count(),
+            'review' => $tasks->where('status', 'review')->count(),
+            'completed' => $tasks->where('status', 'done')->count(),
+            'overdue' => $tasks->filter(fn ($t) => $t->deadline && \Carbon\Carbon::parse($t->deadline)->isPast() && $t->status !== 'done')->count(),
+        ];
+
+        return view('developer.tasks.index', compact('tasks', 'kpi'));
     }
 
     public function show(Task $task)
@@ -34,7 +43,7 @@ class TaskController extends Controller
         $this->authorizeTaskAccess($task);
 
         $validated = $request->validate([
-            'status' => 'required|in:to_do,in_progress,done,pending',
+            'status' => 'required|in:to_do,in_progress,review,done',
         ]);
 
         // Record the status change in history
@@ -131,6 +140,18 @@ class TaskController extends Controller
         }
 
         $task->update($updateData);
+
+        // Notify the customer about the update
+        if ($task->created_by) {
+            Notification::create([
+                'user_id' => $task->created_by,
+                'title' => 'Task Details Updated',
+                'message' => 'Developer updated details for task "' . $task->title . '".',
+                'type' => 'task_updated',
+                'related_id' => $task->id,
+                'related_type' => 'task',
+            ]);
+        }
 
         return redirect()
             ->route('developer.tasks.show', $task)

@@ -30,12 +30,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/api/notifications/{notification}/unread', [NotificationController::class, 'markAsUnread'])->name('notifications.unread');
     Route::post('/api/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
+    Route::delete('/api/notifications/all', [NotificationController::class, 'destroyAll'])->name('notifications.destroyAll');
     Route::delete('/api/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 });
 
 // Customer routes
 Route::middleware(['auth', 'customer'])->prefix('customer')->group(function () {
     Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('customer.dashboard');
+    Route::get('/notifications', [NotificationController::class, 'page'])->name('customer.notifications');
+
+    // All tasks, search, and filter (must be before resource routes to avoid conflict)
+    Route::get('/tasks/all', [CustomerTaskController::class, 'allTasks'])->name('customer.tasks.all');
+    Route::get('/tasks/search', [CustomerTaskController::class, 'search'])->name('customer.tasks.search');
+    Route::get('/tasks/filter', [CustomerTaskController::class, 'filter'])->name('customer.tasks.filter');
 
     // Projects (customers create projects, then create tasks inside projects)
     Route::resource('/projects', CustomerProjectController::class, ['as' => 'customer']);
@@ -43,16 +50,12 @@ Route::middleware(['auth', 'customer'])->prefix('customer')->group(function () {
     // Nested tasks under a project (shallow routes for show/edit/update/destroy)
     Route::resource('/projects.tasks', CustomerTaskController::class, ['as' => 'customer'])
         ->shallow();
-    
-    // All tasks, search, and filter
-    Route::get('/tasks/all', [CustomerTaskController::class, 'allTasks'])->name('customer.tasks.all');
-    Route::get('/tasks/search', [CustomerTaskController::class, 'search'])->name('customer.tasks.search');
-    Route::get('/tasks/filter', [CustomerTaskController::class, 'filter'])->name('customer.tasks.filter');
 });
 
 // Developer routes
 Route::middleware(['auth', 'developer'])->prefix('developer')->group(function () {
     Route::get('/dashboard', [DeveloperDashboardController::class, 'index'])->name('developer.dashboard');
+    Route::get('/notifications', [NotificationController::class, 'page'])->name('developer.notifications');
     
     // Projects (read-only - only projects with assigned tasks)
     Route::get('/projects', [DeveloperProjectController::class, 'index'])->name('developer.projects.index');

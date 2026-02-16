@@ -86,103 +86,6 @@
         border-bottom: 2px solid var(--border);
     }
 
-    .table-responsive {
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 31, 63, 0.06);
-    }
-
-    .table {
-        background-color: var(--white);
-        margin-bottom: 0;
-    }
-
-    .table thead th {
-        background-color: var(--light-bg);
-        border: none;
-        font-weight: 600;
-        color: var(--text-dark);
-        padding: 1.25rem 1rem;
-        font-size: 0.9rem;
-    }
-
-    .table tbody td {
-        border: none;
-        padding: 1rem;
-        border-bottom: 1px solid var(--border);
-        vertical-align: middle;
-    }
-
-    .table tbody tr:hover {
-        background-color: rgba(0, 31, 63, 0.02);
-    }
-
-    .task-title {
-        font-weight: 600;
-        color: var(--text-dark);
-    }
-
-    .status-badge {
-        display: inline-block;
-        padding: 0.4rem 0.75rem;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        font-weight: 600;
-    }
-
-    .status-to-do {
-        background-color: rgba(158, 158, 158, 0.15);
-        color: #4a4a4a;
-    }
-
-    .status-in-progress {
-        background-color: rgba(255, 152, 0, 0.2);
-        color: #e68900;
-    }
-
-    .status-done {
-        background-color: rgba(76, 175, 80, 0.2);
-        color: #388e3c;
-    }
-
-    .status-pending {
-        background-color: rgba(244, 67, 54, 0.2);
-        color: #d32f2f;
-    }
-
-    .category-badge {
-        display: inline-block;
-        background-color: rgba(0, 31, 63, 0.1);
-        color: var(--primary);
-        padding: 0.25rem 0.6rem;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        font-weight: 600;
-    }
-
-    .btn-primary {
-        background-color: var(--primary);
-        border-color: var(--primary);
-        font-weight: 500;
-    }
-
-    .btn-primary:hover {
-        background-color: var(--primary-dark);
-        border-color: var(--primary-dark);
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 3rem 1rem;
-        color: var(--text-muted);
-    }
-
-    .empty-state-icon {
-        font-size: 2rem;
-        opacity: 0.2;
-        margin-bottom: 1rem;
-    }
-
     .description-box {
         background-color: var(--light-bg);
         padding: 1.5rem;
@@ -202,34 +105,286 @@
         margin: 0;
     }
 
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
+    /* Kanban Board */
+    .kanban-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        padding: 1.5rem 0;
     }
 
-    .status-dropdown {
-        padding: 0.5rem 0.75rem;
-        border: 1px solid var(--border);
-        border-radius: 4px;
-        font-size: 0.85rem;
-        font-weight: 500;
-        cursor: pointer;
+    @media (max-width: 1200px) {
+        .kanban-container { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 576px) {
+        .kanban-container { grid-template-columns: 1fr; }
+    }
+
+    .kanban-column {
         background-color: var(--white);
-        color: var(--text-dark);
+        border-radius: 12px;
+        padding: 1.5rem;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        border-top: 6px solid var(--border);
+        box-shadow: 0 2px 12px rgba(0, 31, 63, 0.08);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .kanban-column::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background-size: 100% 100%;
+    }
+
+    .kanban-column.todo::before { background: linear-gradient(90deg, #9e9e9e 0%, #bdbdbd 100%); }
+    .kanban-column.in-progress::before { background: linear-gradient(90deg, #ff9800 0%, #ffb74d 100%); }
+    .kanban-column.review::before { background: linear-gradient(90deg, #7b1fa2 0%, #ab47bc 100%); }
+    .kanban-column.done::before { background: linear-gradient(90deg, #4caf50 0%, #81c784 100%); }
+
+    .kanban-column.todo, .kanban-column.in-progress, .kanban-column.done, .kanban-column.review {
+        border-top: transparent;
+    }
+
+    .kanban-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .kanban-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #1a1a1a !important;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .status-dot {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+
+    .status-dot-todo { background-color: #9e9e9e; }
+    .status-dot-in-progress { background-color: #ff9800; }
+    .status-dot-review { background-color: #7b1fa2; }
+    .status-dot-done { background-color: #4caf50; }
+
+    .task-count {
+        background-color: var(--text-muted);
+        color: var(--white);
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .tasks-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        flex: 1;
+    }
+
+    .task-card {
+        background-color: var(--white);
+        border-radius: 8px;
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 31, 63, 0.06);
+        transition: all 0.3s ease;
+        border-left: 4px solid var(--border);
+        text-decoration: none;
+        display: block;
+        position: relative;
+        padding-bottom: 3.5rem;
+    }
+
+    .task-card:hover {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        box-shadow: 0 4px 12px rgba(0, 31, 63, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .task-card.task-card-overdue {
+        border-left: 4px solid #d32f2f;
+        background-color: rgba(244, 67, 54, 0.04);
+    }
+
+    .task-card.task-card-overdue:hover {
+        background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+    }
+
+    .task-title {
+        font-weight: 700;
+        color: var(--primary);
+        margin: 0 0 0.75rem 0;
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+
+    .task-card:hover .task-title { color: var(--white); }
+
+    .task-info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .task-info-label {
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-right: 0.5rem;
+    }
+
+    .task-card:hover .task-info-label { color: rgba(255, 255, 255, 0.7); }
+
+    .task-info-value {
+        color: var(--primary);
+        flex: 1;
+        text-align: right;
+    }
+
+    .task-card:hover .task-info-value { color: var(--white); }
+
+    .task-category {
+        display: inline-block;
+        background-color: rgba(0, 31, 63, 0.1);
+        color: var(--primary);
+        padding: 0.25rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .task-card:hover .task-category {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: var(--white);
+    }
+
+    .task-status {
+        display: inline-block;
+        padding: 0.4rem 0.85rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: capitalize;
+    }
+
+    .task-status.to-do { background-color: rgba(109, 109, 109, 0.15); color: #4a4a4a; }
+    .task-status.in-progress { background-color: rgba(255, 152, 0, 0.2); color: #e68900; }
+    .task-status.done { background-color: rgba(76, 175, 80, 0.2); color: #388e3c; }
+    .task-status.review { background-color: rgba(123, 31, 162, 0.15); color: #7b1fa2; }
+
+    .task-card:hover .task-status.to-do, .task-card:hover .task-status.in-progress,
+    .task-card:hover .task-status.done, .task-card:hover .task-status.review {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: var(--white);
+    }
+
+    .overdue-badge {
+        display: inline-block;
+        background-color: rgba(244, 67, 54, 0.15);
+        color: #d32f2f;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        margin-left: 0.5rem;
+    }
+
+    .task-card:hover .overdue-badge {
+        background-color: rgba(244, 67, 54, 0.3);
+        color: #ff8a80;
+    }
+
+    .deadline-value { font-size: 0.8rem; }
+
+    .deadline-value.overdue-text {
+        color: #d32f2f;
+        font-weight: 700;
+    }
+
+    .task-card:hover .deadline-value.overdue-text { color: #ff8a80; }
+
+    .attachment-icons {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .attachment-icon {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        color: #6b7280;
+        background: #f3f4f6;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
         transition: all 0.3s ease;
     }
 
-    .status-dropdown:hover {
-        border-color: var(--border);
+    .attachment-icon i { font-size: 0.7rem; }
+
+    .task-card:hover .attachment-icon {
+        background: rgba(255, 255, 255, 0.25);
+        color: #fff;
+    }
+
+    .status-select-card {
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
         background-color: var(--white);
         color: var(--text-dark);
     }
 
-    .status-dropdown:focus {
+    .task-card:hover .status-select-card {
+        border-color: var(--white);
+        background-color: var(--white);
+        color: var(--text-dark);
+    }
+
+    .status-select-card:focus {
         outline: none;
         border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(0, 31, 63, 0.1);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--text-muted);
+    }
+
+    .empty-state-icon {
+        font-size: 2rem;
+        opacity: 0.3;
+        margin-bottom: 1rem;
     }
 </style>
 
@@ -283,53 +438,236 @@
                 </div>
             </div>
         @else
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Category</th>
-                            <th>Status</th>
-                            <th>Created</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($tasks as $task)
-                            <tr>
-                                <td><strong class="task-title">{{ $task->title }}</strong></td>
-                                <td><span class="text-muted small">{{ Str::limit($task->description, 50) }}</span></td>
-                                <td>
-                                    <span class="category-badge">{{ $task->category?->value ?? 'N/A' }}</span>
-                                </td>
-                                <td>
-                                    <span class="status-badge status-{{ str_replace('_', '-', $task->status) }}">
-                                        {{ ucfirst(str_replace('_', ' ', $task->status)) }}
-                                    </span>
-                                </td>
-                                <td><span class="text-muted small">{{ $task->created_at->format('M d, Y') }}</span></td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <form action="{{ route('developer.tasks.updateStatus', $task) }}" method="POST" class="d-inline" onchange="this.submit()">
-                                            @csrf
-                                            @method('PUT')
-                                            <select class="status-dropdown" name="status" title="Update task status">
-                                                <option value="to_do" {{ $task->status === 'to_do' ? 'selected' : '' }}>To Do</option>
-                                                <option value="in_progress" {{ $task->status === 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                                                <option value="done" {{ $task->status === 'done' ? 'selected' : '' }}>Done</option>
-                                                <option value="pending" {{ $task->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                            </select>
-                                        </form>
-                                        <a href="{{ route('developer.tasks.show', $task) }}" class="btn btn-sm btn-primary">
-                                            <i class="fas fa-eye me-1"></i>View
-                                        </a>
+            <div class="kanban-container">
+                <!-- To Do Column -->
+                <div class="kanban-column todo">
+                    <div class="kanban-header">
+                        <h3 class="kanban-title">
+                            <span class="status-dot status-dot-todo"></span>
+                            To Do
+                        </h3>
+                        <span class="task-count">{{ $tasks->where('status', 'to_do')->count() }}</span>
+                    </div>
+                    <div class="tasks-list">
+                        @forelse ($tasks->where('status', 'to_do') as $task)
+                            @php $isOverdue = $task->deadline && \Carbon\Carbon::parse($task->deadline)->isPast() && $task->status !== 'done'; @endphp
+                            <div class="task-card {{ $isOverdue ? 'task-card-overdue' : '' }}">
+                                <a href="{{ route('developer.tasks.show', $task) }}" style="text-decoration:none; color:inherit; display:block;">
+                                    <p class="task-title">
+                                        {{ $task->title }}
+                                        @if ($isOverdue)
+                                            <span class="overdue-badge"><i class="fas fa-exclamation-triangle me-1"></i>Overdue</span>
+                                        @endif
+                                    </p>
+                                    <div class="task-info-row">
+                                        <span class="task-info-label">Category:</span>
+                                        <span class="task-info-value"><span class="task-category">{{ $task->category?->value ?? 'N/A' }}</span></span>
                                     </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                    <div class="task-info-row">
+                                        <span class="task-info-label">Deadline:</span>
+                                        <span class="task-info-value"><span class="deadline-value {{ $isOverdue ? 'overdue-text' : '' }}">{{ $task->deadline ? $task->deadline->format('M d, Y') : 'No deadline' }}</span></span>
+                                    </div>
+                                    @if ($task->link || $task->image_path)
+                                        <div class="attachment-icons">
+                                            @if ($task->link)
+                                                <span class="attachment-icon"><i class="fas fa-link"></i> Link</span>
+                                            @endif
+                                            @if ($task->image_path)
+                                                <span class="attachment-icon"><i class="fas fa-image"></i> Image</span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </a>
+                                <form action="{{ route('developer.tasks.updateStatus', $task) }}" method="POST" onchange="this.submit()">
+                                    @csrf
+                                    @method('PUT')
+                                    <select class="status-select-card" name="status" title="Change status">
+                                        <option value="to_do" selected>To Do</option>
+                                        <option value="in_progress">In Progress</option>
+                                        <option value="review">Review</option>
+                                        <option value="done">Done</option>
+                                    </select>
+                                </form>
+                            </div>
+                        @empty
+                            <div class="empty-state">
+                                <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
+                                <p style="margin: 0;">No tasks</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- In Progress Column -->
+                <div class="kanban-column in-progress">
+                    <div class="kanban-header">
+                        <h3 class="kanban-title">
+                            <span class="status-dot status-dot-in-progress"></span>
+                            In Progress
+                        </h3>
+                        <span class="task-count">{{ $tasks->where('status', 'in_progress')->count() }}</span>
+                    </div>
+                    <div class="tasks-list">
+                        @forelse ($tasks->where('status', 'in_progress') as $task)
+                            @php $isOverdue = $task->deadline && \Carbon\Carbon::parse($task->deadline)->isPast() && $task->status !== 'done'; @endphp
+                            <div class="task-card {{ $isOverdue ? 'task-card-overdue' : '' }}">
+                                <a href="{{ route('developer.tasks.show', $task) }}" style="text-decoration:none; color:inherit; display:block;">
+                                    <p class="task-title">
+                                        {{ $task->title }}
+                                        @if ($isOverdue)
+                                            <span class="overdue-badge"><i class="fas fa-exclamation-triangle me-1"></i>Overdue</span>
+                                        @endif
+                                    </p>
+                                    <div class="task-info-row">
+                                        <span class="task-info-label">Category:</span>
+                                        <span class="task-info-value"><span class="task-category">{{ $task->category?->value ?? 'N/A' }}</span></span>
+                                    </div>
+                                    <div class="task-info-row">
+                                        <span class="task-info-label">Deadline:</span>
+                                        <span class="task-info-value"><span class="deadline-value {{ $isOverdue ? 'overdue-text' : '' }}">{{ $task->deadline ? $task->deadline->format('M d, Y') : 'No deadline' }}</span></span>
+                                    </div>
+                                    @if ($task->link || $task->image_path)
+                                        <div class="attachment-icons">
+                                            @if ($task->link)
+                                                <span class="attachment-icon"><i class="fas fa-link"></i> Link</span>
+                                            @endif
+                                            @if ($task->image_path)
+                                                <span class="attachment-icon"><i class="fas fa-image"></i> Image</span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </a>
+                                <form action="{{ route('developer.tasks.updateStatus', $task) }}" method="POST" onchange="this.submit()">
+                                    @csrf
+                                    @method('PUT')
+                                    <select class="status-select-card" name="status" title="Change status">
+                                        <option value="to_do">To Do</option>
+                                        <option value="in_progress" selected>In Progress</option>
+                                        <option value="review">Review</option>
+                                        <option value="done">Done</option>
+                                    </select>
+                                </form>
+                            </div>
+                        @empty
+                            <div class="empty-state">
+                                <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
+                                <p style="margin: 0;">No tasks</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Review Column -->
+                <div class="kanban-column review">
+                    <div class="kanban-header">
+                        <h3 class="kanban-title">
+                            <span class="status-dot status-dot-review"></span>
+                            Review
+                        </h3>
+                        <span class="task-count">{{ $tasks->where('status', 'review')->count() }}</span>
+                    </div>
+                    <div class="tasks-list">
+                        @forelse ($tasks->where('status', 'review') as $task)
+                            @php $isOverdue = $task->deadline && \Carbon\Carbon::parse($task->deadline)->isPast() && $task->status !== 'done'; @endphp
+                            <div class="task-card {{ $isOverdue ? 'task-card-overdue' : '' }}">
+                                <a href="{{ route('developer.tasks.show', $task) }}" style="text-decoration:none; color:inherit; display:block;">
+                                    <p class="task-title">
+                                        {{ $task->title }}
+                                        @if ($isOverdue)
+                                            <span class="overdue-badge"><i class="fas fa-exclamation-triangle me-1"></i>Overdue</span>
+                                        @endif
+                                    </p>
+                                    <div class="task-info-row">
+                                        <span class="task-info-label">Category:</span>
+                                        <span class="task-info-value"><span class="task-category">{{ $task->category?->value ?? 'N/A' }}</span></span>
+                                    </div>
+                                    <div class="task-info-row">
+                                        <span class="task-info-label">Deadline:</span>
+                                        <span class="task-info-value"><span class="deadline-value {{ $isOverdue ? 'overdue-text' : '' }}">{{ $task->deadline ? $task->deadline->format('M d, Y') : 'No deadline' }}</span></span>
+                                    </div>
+                                    @if ($task->link || $task->image_path)
+                                        <div class="attachment-icons">
+                                            @if ($task->link)
+                                                <span class="attachment-icon"><i class="fas fa-link"></i> Link</span>
+                                            @endif
+                                            @if ($task->image_path)
+                                                <span class="attachment-icon"><i class="fas fa-image"></i> Image</span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </a>
+                                <form action="{{ route('developer.tasks.updateStatus', $task) }}" method="POST" onchange="this.submit()">
+                                    @csrf
+                                    @method('PUT')
+                                    <select class="status-select-card" name="status" title="Change status">
+                                        <option value="to_do">To Do</option>
+                                        <option value="in_progress">In Progress</option>
+                                        <option value="review" selected>Review</option>
+                                        <option value="done">Done</option>
+                                    </select>
+                                </form>
+                            </div>
+                        @empty
+                            <div class="empty-state">
+                                <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
+                                <p style="margin: 0;">No tasks</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Done Column -->
+                <div class="kanban-column done">
+                    <div class="kanban-header">
+                        <h3 class="kanban-title">
+                            <span class="status-dot status-dot-done"></span>
+                            Done
+                        </h3>
+                        <span class="task-count">{{ $tasks->where('status', 'done')->count() }}</span>
+                    </div>
+                    <div class="tasks-list">
+                        @forelse ($tasks->where('status', 'done') as $task)
+                            <div class="task-card">
+                                <a href="{{ route('developer.tasks.show', $task) }}" style="text-decoration:none; color:inherit; display:block;">
+                                    <p class="task-title">{{ $task->title }}</p>
+                                    <div class="task-info-row">
+                                        <span class="task-info-label">Category:</span>
+                                        <span class="task-info-value"><span class="task-category">{{ $task->category?->value ?? 'N/A' }}</span></span>
+                                    </div>
+                                    <div class="task-info-row">
+                                        <span class="task-info-label">Deadline:</span>
+                                        <span class="task-info-value"><span class="deadline-value">{{ $task->deadline ? $task->deadline->format('M d, Y') : 'No deadline' }}</span></span>
+                                    </div>
+                                    @if ($task->link || $task->image_path)
+                                        <div class="attachment-icons">
+                                            @if ($task->link)
+                                                <span class="attachment-icon"><i class="fas fa-link"></i> Link</span>
+                                            @endif
+                                            @if ($task->image_path)
+                                                <span class="attachment-icon"><i class="fas fa-image"></i> Image</span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </a>
+                                <form action="{{ route('developer.tasks.updateStatus', $task) }}" method="POST" onchange="this.submit()">
+                                    @csrf
+                                    @method('PUT')
+                                    <select class="status-select-card" name="status" title="Change status">
+                                        <option value="to_do">To Do</option>
+                                        <option value="in_progress">In Progress</option>
+                                        <option value="review">Review</option>
+                                        <option value="done" selected>Done</option>
+                                    </select>
+                                </form>
+                            </div>
+                        @empty
+                            <div class="empty-state">
+                                <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
+                                <p style="margin: 0;">No tasks</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
             </div>
         @endif
     </div>

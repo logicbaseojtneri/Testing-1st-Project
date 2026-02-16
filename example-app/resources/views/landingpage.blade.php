@@ -386,7 +386,7 @@
                                 <i class="fas fa-th"></i>
                             </div>
                             <h3>Kanban Board</h3>
-                            <p>Visualize your workflow with an intuitive Kanban board. Organize tasks into To Do, In Progress, Done, and Pending columns for better project management.</p>
+                            <p>Visualize your workflow with an intuitive Kanban board. Organize tasks into To Do, In Progress, Review, and Done columns for better project management.</p>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6">

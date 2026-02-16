@@ -25,7 +25,7 @@
                 <!-- All Tasks -->
                 <li class="nav-item">
                     <a class="nav-link px-3" href="{{ route('customer.tasks.all') }}">
-                        <i class="fas fa-list me-2 opacity-75"></i>My Tasks
+                        <i class="fas fa-list me-2 opacity-75"></i>All Tasks
                     </a>
                 </li>
 
@@ -64,8 +64,8 @@
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="{{ route('customer.tasks.filter', ['status' => 'pending']) }}">
-                                <span class="badge me-2" style="background-color: #f44336; padding: 0.35rem 0.6rem; font-size: 0.75rem;"></span>Pending
+                            <a class="dropdown-item" href="{{ route('customer.tasks.filter', ['status' => 'review']) }}">
+                                <span class="badge me-2" style="background-color: #7b1fa2; padding: 0.35rem 0.6rem; font-size: 0.75rem;"></span>Review
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>

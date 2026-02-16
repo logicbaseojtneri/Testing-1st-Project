@@ -9,7 +9,7 @@
         --primary-dark: #001428;
         --white: #ffffff;
         --light-bg: #f8f9fa;
-        --text-dark: #ffffff;
+        --text-dark: #1a1a1a;
         --text-muted: #6c757d;
         --border: #e9ecef;
     }
@@ -52,27 +52,18 @@
         background: linear-gradient(90deg, #ff9800 0%, #ffb74d 100%);
     }
     
+    .kanban-column.review::before {
+        background: linear-gradient(90deg, #7b1fa2 0%, #ab47bc 100%);
+    }
+
     .kanban-column.done::before {
         background: linear-gradient(90deg, #4caf50 0%, #81c784 100%);
     }
     
-    .kanban-column.pending::before {
-        background: linear-gradient(90deg, #f44336 0%, #ef5350 100%);
-    }
-    
-    .kanban-column.todo {
-        border-top: transparent;
-    }
-    
-    .kanban-column.in-progress {
-        border-top: transparent;
-    }
-    
+    .kanban-column.todo,
+    .kanban-column.in-progress,
+    .kanban-column.review,
     .kanban-column.done {
-        border-top: transparent;
-    }
-    
-    .kanban-column.pending {
         border-top: transparent;
     }
     
@@ -104,8 +95,19 @@
     
     .status-todo { background-color: #9e9e9e; }
     .status-in-progress { background-color: #ff9800; }
-    .status-pending { background-color: #f44336; }
+    .status-review { background-color: #7b1fa2; }
     .status-done { background-color: #4caf50; }
+
+    .overdue-badge {
+        display: inline-block;
+        background-color: rgba(244, 67, 54, 0.15);
+        color: #d32f2f;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        margin-left: 0.5rem;
+    }
     
     .task-count {
         background-color: var(--text-muted);
@@ -158,20 +160,87 @@
         box-shadow: 0 4px 12px rgba(0, 31, 63, 0.15);
         transform: translateY(-2px);
     }
-    
-    .task-title {
-        font-weight: 600;
-        color: var(--text-dark);
-        margin: 0 0 0.5rem 0;
-        font-size: 0.95rem;
+
+    .task-card.task-card-overdue {
+        border-left: 4px solid #d32f2f;
+        background-color: rgba(244, 67, 54, 0.04);
     }
-    
-    .task-category {
+
+    .task-info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.35rem;
+        font-size: 0.85rem;
+    }
+
+    .task-info-label {
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .task-info-value {
+        color: var(--text-dark);
+        font-weight: 500;
+        text-align: right;
+    }
+
+    .task-status {
         display: inline-block;
-        background-color: rgba(0, 31, 63, 0.1);
-        color: var(--primary);
-        padding: 0.25rem 0.6rem;
+        padding: 0.2rem 0.6rem;
         border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: capitalize;
+    }
+
+    .task-status.to-do {
+        background-color: rgba(158, 158, 158, 0.15);
+        color: #616161;
+    }
+
+    .task-status.in-progress {
+        background-color: rgba(255, 152, 0, 0.15);
+        color: #e65100;
+    }
+
+    .task-status.review {
+        background-color: rgba(123, 31, 162, 0.15);
+        color: #7b1fa2;
+    }
+
+    .task-status.done {
+        background-color: rgba(76, 175, 80, 0.15);
+        color: #2e7d32;
+    }
+
+    .deadline-value {
+        font-size: 0.8rem;
+    }
+
+    .deadline-value.overdue-text {
+        color: #d32f2f;
+        font-weight: 700;
+    }
+
+    .attachment-icons {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .attachment-icon {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background-color: rgba(0, 31, 63, 0.07);
+        color: var(--primary);
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.72rem;
+        font-weight: 500;
+    }
         font-size: 0.75rem;
         font-weight: 500;
     }
@@ -247,9 +316,36 @@
                 </div>
                 <div class="tasks-list">
                     @forelse ($tasks->where('status', 'to_do') as $task)
-                        <a href="{{ route('customer.tasks.show', $task) }}" class="task-card" style="text-decoration: none; display: block;">
-                            <p class="task-title">{{ $task->title }}</p>
-                            <span class="task-category">{{ $task->category->label() }}</span>
+                        @php $isOverdue = $task->deadline && \Carbon\Carbon::parse($task->deadline)->isPast() && $task->status !== 'done'; @endphp
+                        <a href="{{ route('customer.tasks.show', $task) }}" class="task-card {{ $isOverdue ? 'task-card-overdue' : '' }}" style="text-decoration: none; display: block;">
+                            <p class="task-title">
+                                {{ $task->title }}
+                                @if ($isOverdue)
+                                    <span class="overdue-badge"><i class="fas fa-exclamation-triangle me-1"></i>Overdue</span>
+                                @endif
+                            </p>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Category:</span>
+                                <span class="task-info-value"><span class="task-category">{{ $task->category->label() }}</span></span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Deadline:</span>
+                                <span class="task-info-value"><span class="deadline-value {{ $isOverdue ? 'overdue-text' : '' }}">{{ $task->deadline ? $task->deadline->format('M d, Y') : 'No deadline' }}</span></span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Status:</span>
+                                <span class="task-info-value"><span class="task-status to-do">To Do</span></span>
+                            </div>
+                            @if ($task->link || $task->image_path)
+                                <div class="attachment-icons">
+                                    @if ($task->link)
+                                        <span class="attachment-icon"><i class="fas fa-link"></i> Link</span>
+                                    @endif
+                                    @if ($task->image_path)
+                                        <span class="attachment-icon"><i class="fas fa-image"></i> Image</span>
+                                    @endif
+                                </div>
+                            @endif
                             <div class="task-meta">
                                 <span>{{ $task->created_at->format('M d') }}</span>
                             </div>
@@ -277,9 +373,93 @@
                 </div>
                 <div class="tasks-list">
                     @forelse ($tasks->where('status', 'in_progress') as $task)
-                        <a href="{{ route('customer.tasks.show', $task) }}" class="task-card" style="text-decoration: none; display: block;">
-                            <p class="task-title">{{ $task->title }}</p>
-                            <span class="task-category">{{ $task->category->label() }}</span>
+                        @php $isOverdue = $task->deadline && \Carbon\Carbon::parse($task->deadline)->isPast() && $task->status !== 'done'; @endphp
+                        <a href="{{ route('customer.tasks.show', $task) }}" class="task-card {{ $isOverdue ? 'task-card-overdue' : '' }}" style="text-decoration: none; display: block;">
+                            <p class="task-title">
+                                {{ $task->title }}
+                                @if ($isOverdue)
+                                    <span class="overdue-badge"><i class="fas fa-exclamation-triangle me-1"></i>Overdue</span>
+                                @endif
+                            </p>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Category:</span>
+                                <span class="task-info-value"><span class="task-category">{{ $task->category->label() }}</span></span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Deadline:</span>
+                                <span class="task-info-value"><span class="deadline-value {{ $isOverdue ? 'overdue-text' : '' }}">{{ $task->deadline ? $task->deadline->format('M d, Y') : 'No deadline' }}</span></span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Status:</span>
+                                <span class="task-info-value"><span class="task-status in-progress">In Progress</span></span>
+                            </div>
+                            @if ($task->link || $task->image_path)
+                                <div class="attachment-icons">
+                                    @if ($task->link)
+                                        <span class="attachment-icon"><i class="fas fa-link"></i> Link</span>
+                                    @endif
+                                    @if ($task->image_path)
+                                        <span class="attachment-icon"><i class="fas fa-image"></i> Image</span>
+                                    @endif
+                                </div>
+                            @endif
+                            <div class="task-meta">
+                                <span>{{ $task->created_at->format('M d') }}</span>
+                            </div>
+                        </a>
+                    @empty
+                        <div class="empty-state">
+                            <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
+                            <p style="margin: 0;">No tasks</p>
+                        </div>
+                    @endforelse
+                </div>
+                <a href="{{ route('customer.projects.tasks.create', $project) }}" class="add-task-btn">
+                    <i class="fas fa-plus me-2"></i>Add Task
+                </a>
+            </div>
+
+            <!-- Review Column -->
+            <div class="kanban-column review">
+                <div class="kanban-header">
+                    <h3 class="kanban-title">
+                        <span class="status-badge status-review"></span>
+                        Review
+                    </h3>
+                    <span class="task-count">{{ $tasks->where('status', 'review')->count() }}</span>
+                </div>
+                <div class="tasks-list">
+                    @forelse ($tasks->where('status', 'review') as $task)
+                        @php $isOverdue = $task->deadline && \Carbon\Carbon::parse($task->deadline)->isPast() && $task->status !== 'done'; @endphp
+                        <a href="{{ route('customer.tasks.show', $task) }}" class="task-card {{ $isOverdue ? 'task-card-overdue' : '' }}" style="text-decoration: none; display: block;">
+                            <p class="task-title">
+                                {{ $task->title }}
+                                @if ($isOverdue)
+                                    <span class="overdue-badge"><i class="fas fa-exclamation-triangle me-1"></i>Overdue</span>
+                                @endif
+                            </p>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Category:</span>
+                                <span class="task-info-value"><span class="task-category">{{ $task->category->label() }}</span></span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Deadline:</span>
+                                <span class="task-info-value"><span class="deadline-value {{ $isOverdue ? 'overdue-text' : '' }}">{{ $task->deadline ? $task->deadline->format('M d, Y') : 'No deadline' }}</span></span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Status:</span>
+                                <span class="task-info-value"><span class="task-status review">Review</span></span>
+                            </div>
+                            @if ($task->link || $task->image_path)
+                                <div class="attachment-icons">
+                                    @if ($task->link)
+                                        <span class="attachment-icon"><i class="fas fa-link"></i> Link</span>
+                                    @endif
+                                    @if ($task->image_path)
+                                        <span class="attachment-icon"><i class="fas fa-image"></i> Image</span>
+                                    @endif
+                                </div>
+                            @endif
                             <div class="task-meta">
                                 <span>{{ $task->created_at->format('M d') }}</span>
                             </div>
@@ -309,37 +489,28 @@
                     @forelse ($tasks->where('status', 'done') as $task)
                         <a href="{{ route('customer.tasks.show', $task) }}" class="task-card" style="text-decoration: none; display: block;">
                             <p class="task-title">{{ $task->title }}</p>
-                            <span class="task-category">{{ $task->category->label() }}</span>
-                            <div class="task-meta">
-                                <span>{{ $task->created_at->format('M d') }}</span>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Category:</span>
+                                <span class="task-info-value"><span class="task-category">{{ $task->category->label() }}</span></span>
                             </div>
-                        </a>
-                    @empty
-                        <div class="empty-state">
-                            <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
-                            <p style="margin: 0;">No tasks</p>
-                        </div>
-                    @endforelse
-                </div>
-                <a href="{{ route('customer.projects.tasks.create', $project) }}" class="add-task-btn">
-                    <i class="fas fa-plus me-2"></i>Add Task
-                </a>
-            </div>
-
-            <!-- Pending Column -->
-            <div class="kanban-column pending">
-                <div class="kanban-header">
-                    <h3 class="kanban-title">
-                        <span class="status-badge status-pending"></span>
-                        Pending
-                    </h3>
-                    <span class="task-count">{{ $tasks->where('status', 'pending')->count() }}</span>
-                </div>
-                <div class="tasks-list">
-                    @forelse ($tasks->where('status', 'pending') as $task)
-                        <a href="{{ route('customer.tasks.show', $task) }}" class="task-card" style="text-decoration: none; display: block;">
-                            <p class="task-title">{{ $task->title }}</p>
-                            <span class="task-category">{{ $task->category->label() }}</span>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Deadline:</span>
+                                <span class="task-info-value"><span class="deadline-value">{{ $task->deadline ? $task->deadline->format('M d, Y') : 'No deadline' }}</span></span>
+                            </div>
+                            <div class="task-info-row">
+                                <span class="task-info-label">Status:</span>
+                                <span class="task-info-value"><span class="task-status done">Done</span></span>
+                            </div>
+                            @if ($task->link || $task->image_path)
+                                <div class="attachment-icons">
+                                    @if ($task->link)
+                                        <span class="attachment-icon"><i class="fas fa-link"></i> Link</span>
+                                    @endif
+                                    @if ($task->image_path)
+                                        <span class="attachment-icon"><i class="fas fa-image"></i> Image</span>
+                                    @endif
+                                </div>
+                            @endif
                             <div class="task-meta">
                                 <span>{{ $task->created_at->format('M d') }}</span>
                             </div>

@@ -183,11 +183,6 @@
                     </ul>
                 </div>
             @endif
-            @if (session('success'))
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
-                </div>
-            @endif
             @if (session('error'))
                 <div class="alert alert-danger">
                     <i class="fas fa-exclamation-circle me-2"></i>{{ session('error') }}
@@ -205,7 +200,7 @@
                             <option value="to_do" {{ $task->status === 'to_do' ? 'selected' : '' }}>To Do</option>
                             <option value="in_progress" {{ $task->status === 'in_progress' ? 'selected' : '' }}>In Progress</option>
                             <option value="done" {{ $task->status === 'done' ? 'selected' : '' }}>Done</option>
-                            <option value="pending" {{ $task->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="review" {{ $task->status === 'review' ? 'selected' : '' }}>Review</option>
                         </select>
                     </div>
                     <div class="col-md-4">

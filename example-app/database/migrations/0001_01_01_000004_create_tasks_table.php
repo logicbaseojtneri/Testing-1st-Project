@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('category');
-            $table->string('status')->default('pending');
+            $table->string('status')->default('to_do');
             $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
             $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
             $table->foreignId('assigned_to')->nullable()->constrained('users')->nullOnDelete();

@@ -52,8 +52,8 @@
             border-top-color: #10b981;
         }
         
-        .task-column.pending {
-            border-top-color: #ef4444;
+        .task-column.review {
+            border-top-color: #7b1fa2;
         }
         
         .task-column-header {
@@ -218,13 +218,13 @@
                                 @endforelse
                             </div>
 
-                            <!-- Pending Column -->
-                            <div class="task-column pending">
+                            <!-- Review Column -->
+                            <div class="task-column review">
                                 <div class="task-column-header">
-                                    <span>Pending</span>
-                                    <span class="task-count-badge">{{ $tasksByStatus->get('pending', collect())->count() }}</span>
+                                    <span>Review</span>
+                                    <span class="task-count-badge">{{ $tasksByStatus->get('review', collect())->count() }}</span>
                                 </div>
-                                @forelse ($tasksByStatus->get('pending', collect()) as $task)
+                                @forelse ($tasksByStatus->get('review', collect()) as $task)
                                     <a href="{{ route('customer.tasks.show', $task) }}" class="task-item" style="text-decoration: none;">
                                         <div class="task-title">{{ $task->title }}</div>
                                         <div class="task-project">{{ $task->project->name ?? 'No Project' }}</div>

@@ -203,6 +203,26 @@
         padding-left: 1.25rem;
     }
 
+    .task-item.task-item-overdue {
+        border-left: 4px solid #d32f2f;
+        background-color: rgba(244, 67, 54, 0.04);
+    }
+
+    .task-item.task-item-overdue:hover {
+        background-color: rgba(244, 67, 54, 0.08);
+    }
+
+    .overdue-badge {
+        display: inline-block;
+        background-color: rgba(244, 67, 54, 0.15);
+        color: #d32f2f;
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        margin-left: 0.4rem;
+    }
+
     .task-info {
         flex: 1;
     }
@@ -219,6 +239,31 @@
         color: var(--text-muted);
     }
 
+    .attachment-icons {
+        display: inline-flex;
+        gap: 0.4rem;
+        margin-left: 0.5rem;
+    }
+
+    .attachment-icon {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.2rem;
+        font-size: 0.7rem;
+        color: #6b7280;
+        background: #f3f4f6;
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+    }
+
+    .attachment-icon i {
+        font-size: 0.65rem;
+    }
+
+    .task-item:hover .attachment-icon {
+        background: rgba(0,0,0,0.08);
+    }
+
     .task-status {
         display: inline-block;
         padding: 0.3rem 0.7rem;
@@ -233,7 +278,7 @@
     .task-status.to-do { background-color: rgba(158, 158, 158, 0.15); color: #4a4a4a; }
     .task-status.in-progress { background-color: rgba(255, 152, 0, 0.2); color: #e68900; }
     .task-status.done { background-color: rgba(76, 175, 80, 0.2); color: #388e3c; }
-    .task-status.pending { background-color: rgba(244, 67, 54, 0.2); color: #d32f2f; }
+    .task-status.review { background-color: rgba(123, 31, 162, 0.15); color: #7b1fa2; }
 
     .empty-message {
         padding: 2rem;
@@ -348,12 +393,32 @@
             @else
                 <div class="tasks-container">
                     @foreach ($recentTasks as $task)
-                        <a href="{{ route('developer.tasks.show', $task) }}" class="task-item">
+                        @php $isOverdue = $task->deadline && \Carbon\Carbon::parse($task->deadline)->isPast() && $task->status !== 'done'; @endphp
+                        <a href="{{ route('developer.tasks.show', $task) }}" class="task-item {{ $isOverdue ? 'task-item-overdue' : '' }}">
                             <div class="task-info">
-                                <div class="task-title">{{ $task->title }}</div>
+                                <div class="task-title">
+                                    {{ $task->title }}
+                                    @if ($isOverdue)
+                                        <span class="overdue-badge"><i class="fas fa-exclamation-triangle me-1"></i>Overdue</span>
+                                    @endif
+                                    @if ($task->link || $task->image_path)
+                                        <span class="attachment-icons">
+                                            @if ($task->link)
+                                                <span class="attachment-icon"><i class="fas fa-link"></i> Link</span>
+                                            @endif
+                                            @if ($task->image_path)
+                                                <span class="attachment-icon"><i class="fas fa-image"></i> Image</span>
+                                            @endif
+                                        </span>
+                                    @endif
+                                </div>
                                 <div class="task-project">
                                     <i class="fas fa-folder-open"></i>
                                     {{ $task->project->name ?? 'No Project' }}
+                                </div>
+                                <div class="task-project">
+                                    <i class="fas fa-calendar"></i>
+                                    {{ $task->deadline ? $task->deadline->format('M d, Y') : 'No deadline' }}
                                 </div>
                             </div>
                             <span class="task-status {{ str_replace('_', '-', $task->status) }}">
