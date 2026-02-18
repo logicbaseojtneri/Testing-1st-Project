@@ -237,53 +237,10 @@
                 line-height: 1.6;
             }
             
-            /* Contact Section */
-            .contact-section {
-                padding: 5rem 0;
-                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-                color: var(--white);
-            }
-            .contact-header {
-                text-align: center;
-                margin-bottom: 3rem;
-            }
-            .contact-header h2 {
-                font-size: 2.2rem;
-                font-weight: 800;
-                margin-bottom: 0.5rem;
-            }
-            .contact-header p {
-                font-size: 1.1rem;
-                color: rgba(255, 255, 255, 0.9);
-            }
-            .form-floating > .form-control,
-            .form-floating > .form-select {
-                background-color: rgba(255, 255, 255, 0.95) !important;
-                border: 2px solid transparent;
-                transition: all 0.3s ease;
-            }
-            .form-floating > .form-control:focus,
-            .form-floating > .form-select:focus {
-                background-color: var(--white) !important;
-                border-color: var(--primary) !important;
-                box-shadow: none;
-            }
+
             .form-floating > label {
                 color: var(--text-dark);
                 font-weight: 600;
-            }
-            .btn-submit {
-                background: var(--white);
-                color: var(--primary) !important;
-                border: none;
-                padding: 0.9rem 2rem;
-                border-radius: 10px;
-                font-weight: 700;
-                transition: all 0.3s ease;
-            }
-            .btn-submit:hover:not(:disabled) {
-                background: var(--light-bg);
-                transform: translateY(-2px);
             }
             
             /* Footer */
@@ -335,16 +292,16 @@
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-landing">
             <div class="container">
-                <a class="navbar-brand" href="{{ route('login') }}"><i class="fas fa-tasks me-2"></i>ManageX</a>
+                <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('login') }}" style="min-width:200px;">
+                    <span style="color: #1a1a1a; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px;">ManageX</span>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
-                        <li class="nav-item ms-2"><a class="btn-primary-custom" href="{{ route('register') }}" style="padding: 0.6rem 1.4rem; font-size: 0.95rem;">Register</a></li>
+                        <li class="nav-item"><a class="btn-primary-custom" href="{{ route('login') }}" style="padding: 0.6rem 1.4rem; font-size: 0.95rem;">Login</a></li>
                     </ul>
                 </div>
             </div>
@@ -361,14 +318,11 @@
                             <a href="{{ route('login') }}" class="btn-primary-custom">
                                 <i class="fas fa-sign-in-alt me-2"></i>Login to Start
                             </a>
-                            <a href="{{ route('register') }}" class="btn-secondary-custom">
-                                <i class="fas fa-user-plus me-2"></i>Create Account
-                            </a>
                         </div>
                     </div>
-                    <div class="hero-image">
-                        <img src="{{ asset('images/illustration.png') }}" alt="Project Management" onerror="this.style.display='none'">
+                    <div class="hero-image" style="display: flex; align-items: center; justify-content: center; min-height: 220px;">
                     </div>
+                        <!-- Logo image removed from hero section -->
                 </div>
             </div>
         </section>
@@ -438,42 +392,7 @@
             </div>
         </section>
     
-        <!-- Contact Section -->
-        <section class="contact-section" id="contact">
-            <div class="container">
-                <div class="contact-header">
-                    <h2>Get In Touch</h2>
-                    <p>Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-lg-6">
-                        <form>
-                            <div class="form-floating mb-3">
-                                <input class="form-control" id="name" type="text" placeholder="Your name" required>
-                                <label for="name">Full Name</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input class="form-control" id="email" type="email" placeholder="name@example.com" required>
-                                <label for="email">Email Address</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input class="form-control" id="phone" type="tel" placeholder="(123) 456-7890">
-                                <label for="phone">Phone Number</label>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <textarea class="form-control" id="message" placeholder="Your message here..." style="height: 120px;" required></textarea>
-                                <label for="message">Message</label>
-                            </div>
-                            <div class="d-grid">
-                                <button class="btn btn-submit" type="submit">
-                                    <i class="fas fa-paper-plane me-2"></i>Send Message
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
+
         <!-- Footer -->
         <footer>
             <div class="container">
@@ -484,10 +403,6 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
         <script src="{{ asset('js_2/scripts.js') }}"></script>
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <!-- * *                               SB Forms JS                               * *-->
-        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
-        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
-        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+
     </body>
 </html>

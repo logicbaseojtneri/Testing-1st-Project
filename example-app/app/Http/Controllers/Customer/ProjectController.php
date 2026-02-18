@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Services\NotificationService;
 use App\Services\ProjectAssignmentService;
 use Illuminate\Http\Request;
 
@@ -46,6 +47,15 @@ class ProjectController extends Controller
         // Automatically assign developers to the project
         $assignmentService = new ProjectAssignmentService();
         $assignmentService->assignDevelopersToProject($project);
+
+        // Notify admins about the new project
+        NotificationService::notifyAdmins(
+            'New Project Created',
+            auth()->user()->name . ' created a new project: "' . $project->name . '".',
+            'project_created',
+            $project->id,
+            'project'
+        );
 
         return redirect()
             ->route('customer.projects.show', $project)
@@ -93,7 +103,16 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         $this->ensureCustomerMember($project);
+        $projectName = $project->name;
         $project->delete();
+
+        // Notify admins about the project deletion
+        NotificationService::notifyAdmins(
+            'Project Deleted',
+            auth()->user()->name . ' deleted project "' . $projectName . '".',
+            'project_deleted'
+        );
+
         return redirect()
             ->route('customer.dashboard')
             ->with('success', 'Project deleted.');

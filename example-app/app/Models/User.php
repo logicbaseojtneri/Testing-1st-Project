@@ -7,13 +7,14 @@ use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +26,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'is_active',
     ];
 
     /**
@@ -48,6 +50,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
+            'is_active' => 'boolean',
         ];
     }
 
@@ -91,6 +94,78 @@ class User extends Authenticatable
     public function isDeveloper(): bool
     {
         return in_array($this->role, UserRole::developerRoles());
+    }
+
+    /**
+     * Check if user is admin
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === UserRole::ADMIN;
+    }
+
+    /**
+     * Check if user is the super admin (admin@example.com)
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === UserRole::ADMIN && $this->email === 'admin@example.com';
+    }
+
+    /**
+     * Check if user account is active
+     */
+    public function isActive(): bool
+    {
+        return (bool) $this->is_active;
+    }
+
+    /**
+     * Check if user can register other users
+     */
+    public function canRegisterUsers(): bool
+    {
+        return $this->role->canRegisterUsers();
+    }
+
+    /**
+     * Check if user can manage users
+     */
+    public function canManageUsers(): bool
+    {
+        return $this->role->canManageUsers();
+    }
+
+    /**
+     * Check if user can create tasks
+     */
+    public function canCreateTask(): bool
+    {
+        return $this->role->canCreateTask();
+    }
+
+    /**
+     * Check if user can create projects
+     */
+    public function canCreateProject(): bool
+    {
+        return $this->role->canCreateProject();
+    }
+
+    /**
+     * Check if user can delete project
+     */
+    public function canDeleteProject(): bool
+    {
+        return $this->role->canDeleteProject();
+    }
+
+    /**
+     * Check if user can delete task
+     */
+    public function canDeleteTask(): bool
+    {
+        return $this->role->canDeleteTask();
     }
 
     /**

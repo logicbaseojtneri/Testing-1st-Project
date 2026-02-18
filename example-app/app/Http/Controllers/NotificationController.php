@@ -19,6 +19,9 @@ class NotificationController extends Controller
         }
 
         $user = auth()->user();
+        if ($user->role === UserRole::ADMIN) {
+            return route('admin.tasks.show', $notif->related_id);
+        }
         if ($user->role === UserRole::CUSTOMER) {
             return route('customer.tasks.show', $notif->related_id);
         }
@@ -80,9 +83,13 @@ class NotificationController extends Controller
         $unreadCount = auth()->user()->unreadNotifications()->count();
         $user = auth()->user();
 
-        $view = $user->role === UserRole::CUSTOMER
-            ? 'customer.notifications.index'
-            : 'developer.notifications.index';
+        if ($user->role === UserRole::ADMIN) {
+            $view = 'admin.notifications.index';
+        } elseif ($user->role === UserRole::CUSTOMER) {
+            $view = 'customer.notifications.index';
+        } else {
+            $view = 'developer.notifications.index';
+        }
 
         return view($view, compact('notifications', 'unreadCount'));
     }

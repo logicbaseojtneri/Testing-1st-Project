@@ -4,17 +4,21 @@ namespace App\Enums;
 
 enum UserRole: string
 {
+    case ADMIN = 'admin';
     case CUSTOMER = 'customer';
-    case FRONTEND_DEV = 'frontend_dev';
-    case BACKEND_DEV = 'backend_dev';
+    case DEVELOPER = 'developer';
+    case FRONTEND = 'frontend';
+    case BACKEND = 'backend';
     case SERVER_ADMIN = 'server_admin';
 
     public function label(): string
     {
         return match($this) {
+            self::ADMIN => 'Administrator',
             self::CUSTOMER => 'Customer',
-            self::FRONTEND_DEV => 'Frontend Developer',
-            self::BACKEND_DEV => 'Backend Developer',
+            self::DEVELOPER => 'Developer',
+            self::FRONTEND => 'Frontend Developer',
+            self::BACKEND => 'Backend Developer',
             self::SERVER_ADMIN => 'Server Administrator',
         };
     }
@@ -22,9 +26,40 @@ enum UserRole: string
     public static function developerRoles(): array
     {
         return [
-            self::FRONTEND_DEV,
-            self::BACKEND_DEV,
+            self::DEVELOPER,
+            self::FRONTEND,
+            self::BACKEND,
             self::SERVER_ADMIN,
         ];
+    }
+
+    public function canCreateTask(): bool
+    {
+        return in_array($this, [self::DEVELOPER, self::FRONTEND, self::BACKEND, self::CUSTOMER]);
+    }
+
+    public function canCreateProject(): bool
+    {
+        return in_array($this, [self::DEVELOPER, self::FRONTEND, self::BACKEND, self::CUSTOMER]);
+    }
+
+    public function canRegisterUsers(): bool
+    {
+        return $this === self::ADMIN;
+    }
+
+    public function canManageUsers(): bool
+    {
+        return $this === self::ADMIN;
+    }
+
+    public function canDeleteProject(): bool
+    {
+        return in_array($this, [self::ADMIN, self::DEVELOPER, self::BACKEND]);
+    }
+
+    public function canDeleteTask(): bool
+    {
+        return in_array($this, [self::ADMIN, self::DEVELOPER, self::BACKEND]);
     }
 }

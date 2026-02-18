@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Models\TaskHistory;
 use App\Models\Notification;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -67,6 +68,15 @@ class TaskController extends Controller
                 'related_id' => $task->id,
                 'related_type' => 'task',
             ]);
+
+            // Notify admins about the task status change
+            NotificationService::notifyAdmins(
+                'Task Status Changed',
+                auth()->user()->name . ' changed task "' . $task->title . '" status to ' . ucfirst(str_replace('_', ' ', $validated['status'])) . '.',
+                'task_status_updated',
+                $task->id,
+                'task'
+            );
         }
 
         return redirect()
@@ -152,6 +162,15 @@ class TaskController extends Controller
                 'related_type' => 'task',
             ]);
         }
+
+        // Notify admins about the task details update
+        NotificationService::notifyAdmins(
+            'Task Details Updated',
+            auth()->user()->name . ' updated details for task "' . $task->title . '".',
+            'task_updated',
+            $task->id,
+            'task'
+        );
 
         return redirect()
             ->route('developer.tasks.show', $task)

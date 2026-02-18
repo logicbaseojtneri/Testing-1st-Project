@@ -137,10 +137,7 @@
                                         </button>
                                         <hr>
                                     </form>
-                                    <hr>
-                                    <div class="text-center">
-                                        <a class="small" href="{{ route('register') }}">Create an Account!</a>
-                                    </div>
+                                    <!-- Registration link removed to prevent public account creation -->
 
                                     <div class="alert alert-info mt-3" role="alert">
                                         <strong>Demo Credentials:</strong><br>

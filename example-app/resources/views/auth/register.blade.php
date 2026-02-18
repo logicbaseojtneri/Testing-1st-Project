@@ -325,8 +325,8 @@
                             required>
                             <option value="">-- Choose your role --</option>
                             <option value="customer" {{ old('role') == 'customer' ? 'selected' : '' }}>Customer (Project Manager)</option>
-                            <option value="frontend_dev" {{ old('role') == 'frontend_dev' ? 'selected' : '' }}>Frontend Developer</option>
-                            <option value="backend_dev" {{ old('role') == 'backend_dev' ? 'selected' : '' }}>Backend Developer</option>
+                            <option value="frontend" {{ old('role') == 'frontend' ? 'selected' : '' }}>Frontend Developer</option>
+                            <option value="backend" {{ old('role') == 'backend' ? 'selected' : '' }}>Backend Developer</option>
                             <option value="server_admin" {{ old('role') == 'server_admin' ? 'selected' : '' }}>Server Administrator</option>
                         </select>
                         <div class="role-hint">Choose the role that best describes your position</div>

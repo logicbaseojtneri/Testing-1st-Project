@@ -346,23 +346,7 @@
                     </button>
                 </form>
                 
-                <!-- Divider -->
-                <div class="divider">
-                    <span>New to ManageX?</span>
-                </div>
-                
-                <!-- Create Account Link -->
-                <p style="text-align: center; margin-bottom: 0;">
-                    <a href="{{ route('register') }}" style="color: var(--primary); text-decoration: none; font-weight: 600;">
-                        Create account
-                    </a>
-                </p>
-                
-                <!-- Demo Info -->
-                <div class="demo-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    <strong>Demo:</strong> customer@example.com | Password: password
-                </div>
+                <!-- Registration and demo info removed -->
             </div>
         </div>
     </div>

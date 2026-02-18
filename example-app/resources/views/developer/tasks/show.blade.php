@@ -273,7 +273,13 @@
                             @foreach ($task->history as $record)
                                 <tr>
                                     <td><strong>{{ ucfirst(str_replace('_', ' ', $record->field_name)) }}</strong></td>
-                                    <td>{{ $record->changedBy->name ?? 'System' }}</td>
+                                    <td>
+                                        @if(auth()->check() && auth()->user()->isAdmin())
+                                            {{ $record->changedBy->name ?? 'System' }}
+                                        @else
+                                            <em>Hidden</em>
+                                        @endif
+                                    </td>
                                     <td style="color: var(--text-muted);">{{ $record->old_value ?? '—' }}</td>
                                     <td style="color: var(--text-muted);">{{ $record->new_value ?? '—' }}</td>
                                     <td style="color: var(--text-muted); font-size: 0.9rem;">{{ $record->created_at->format('M d, Y H:i') }}</td>

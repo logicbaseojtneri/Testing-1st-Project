@@ -7,6 +7,7 @@ use App\Models\Task;
 use App\Models\Project;
 use App\Models\TaskHistory;
 use App\Models\Notification;
+use App\Services\NotificationService;
 use App\Services\TaskAssignmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -78,6 +79,15 @@ class TaskController extends Controller
                 'related_type' => 'task',
             ]);
         }
+
+        // Notify admins about the new task
+        NotificationService::notifyAdmins(
+            'New Task Created',
+            auth()->user()->name . ' created task "' . $task->title . '" in project "' . $project->name . '".',
+            'task_created',
+            $task->id,
+            'task'
+        );
 
         return redirect()
             ->route('customer.projects.show', $project)
@@ -202,6 +212,15 @@ class TaskController extends Controller
             ]);
         }
 
+        // Notify admins about the task update
+        NotificationService::notifyAdmins(
+            'Task Updated',
+            auth()->user()->name . ' updated task "' . $task->title . '".',
+            'task_updated',
+            $task->id,
+            'task'
+        );
+
         return redirect()
             ->route('customer.tasks.show', $task)
             ->with('success', 'Task updated successfully!');
@@ -223,7 +242,15 @@ class TaskController extends Controller
             'new_value' => 'deleted',
         ]);
 
+        $taskTitle = $task->title;
         $task->delete();
+
+        // Notify admins about the task deletion
+        NotificationService::notifyAdmins(
+            'Task Deleted',
+            auth()->user()->name . ' deleted task "' . $taskTitle . '".',
+            'task_deleted'
+        );
 
         return redirect()
             ->route('customer.projects.tasks.index', $projectId)

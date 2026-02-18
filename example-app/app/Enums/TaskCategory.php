@@ -20,8 +20,8 @@ enum TaskCategory: string
     public function assignToRole(): UserRole
     {
         return match($this) {
-            self::FRONTEND => UserRole::FRONTEND_DEV,
-            self::BACKEND => UserRole::BACKEND_DEV,
+            self::FRONTEND => UserRole::FRONTEND,
+            self::BACKEND => UserRole::BACKEND,
             self::SERVER => UserRole::SERVER_ADMIN,
         };
     }

@@ -34,10 +34,22 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
+            // Block disabled accounts
+            if (!$user->is_active) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()->withErrors([
+                    'email' => 'Your account has been disabled. Please contact the administrator.',
+                ])->onlyInput('email');
+            }
+
             // Redirect based on role
             return match($user->role) {
                 UserRole::CUSTOMER => redirect('/customer/dashboard'),
-                UserRole::FRONTEND_DEV, UserRole::BACKEND_DEV, UserRole::SERVER_ADMIN => redirect('/developer/dashboard'),
+                UserRole::ADMIN => redirect('/admin/dashboard'),
+                UserRole::FRONTEND, UserRole::BACKEND, UserRole::DEVELOPER, UserRole::SERVER_ADMIN => redirect('/developer/dashboard'),
                 default => redirect('/'),
             };
         }
